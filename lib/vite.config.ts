@@ -22,12 +22,13 @@ export default defineConfig({
       fileName: "react-excel-lite",
     },
     rollupOptions: {
-      external: ["react", "react-dom", "react/jsx-runtime"],
+      external: ["react", "react-dom", "react/jsx-runtime", "tailwindcss"],
       output: {
         globals: {
           react: "React",
           "react-dom": "ReactDOM",
           "react/jsx-runtime": "ReactJsxRuntime",
+          tailwindcss: "tailwindcss",
         },
       },
     },
