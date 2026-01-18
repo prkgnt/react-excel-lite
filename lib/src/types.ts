@@ -48,21 +48,22 @@ export interface RowHeaderGroup {
 
 /**
  * Grid styles configuration
+ * All values are CSS class strings (e.g., Tailwind classes, CSS modules, or plain CSS classes)
  */
 export interface GridStyles {
-  /** Data cell style */
+  /** CSS class for data cells */
   cell?: string;
-  /** Selected cell style */
+  /** CSS class for selected cells (overrides default blue selection style) */
   selected?: string;
-  /** Fill target cell style (when dragging fill handle) */
+  /** CSS class for fill target cells when dragging fill handle (overrides default light blue) */
   fillTarget?: string;
-  /** Fill handle style (bottom-right corner handle) */
+  /** CSS class for fill handle at bottom-right corner (overrides default blue square) */
   fillHandle?: string;
-  /** Column group header style */
+  /** CSS class for column group headers */
   colGroup?: string;
-  /** Column header style */
+  /** CSS class for individual column headers */
   colHeader?: string;
-  /** Row header style */
+  /** CSS class for row headers */
   rowHeader?: string;
 }
 

@@ -16,6 +16,7 @@ A lightweight, Excel-like editable grid component for React.
 - Grouped column headers with custom styling
 - Row headers with custom styling
 - Keyboard shortcuts (Delete/Backspace to clear)
+- **Styling-agnostic**: Works with Tailwind CSS, CSS Modules, plain CSS, or any styling solution
 - Zero external dependencies
 
 ## Installation
@@ -100,9 +101,18 @@ function App() {
 }
 ```
 
-## Custom Styling
+## Styling
 
-Use the `styles` prop to customize selection, fill handle, and header styles:
+The component comes with sensible default styles built-in. You can customize styles using the `styles` prop with CSS class strings from any styling solution.
+
+### Default Styles
+
+Out of the box, the grid has:
+- Light gray borders and headers
+- Blue selection highlight
+- Blue fill handle
+
+### Custom Styling with Tailwind CSS
 
 ```tsx
 import type { GridStyles } from "react-excel-lite";
@@ -119,6 +129,66 @@ const styles: GridStyles = {
 
 <ExcelGrid data={data} onChange={setData} styles={styles} />;
 ```
+
+### Custom Styling with CSS Modules
+
+```tsx
+import styles from "./grid.module.css";
+import type { GridStyles } from "react-excel-lite";
+
+const gridStyles: GridStyles = {
+  selected: styles.selectedCell,
+  fillTarget: styles.fillTargetCell,
+  fillHandle: styles.fillHandle,
+};
+
+<ExcelGrid data={data} onChange={setData} styles={gridStyles} />;
+```
+
+### Custom Styling with Plain CSS
+
+```tsx
+const styles: GridStyles = {
+  selected: "my-selected-cell",
+  fillTarget: "my-fill-target",
+  fillHandle: "my-fill-handle",
+};
+
+<ExcelGrid data={data} onChange={setData} styles={styles} />;
+```
+
+```css
+/* styles.css */
+.my-selected-cell {
+  background-color: #f3e8ff;
+  outline: 2px solid #a855f7;
+  outline-offset: -2px;
+}
+
+.my-fill-target {
+  background-color: #faf5ff;
+}
+
+.my-fill-handle {
+  background-color: #a855f7;
+}
+```
+
+### GridStyles Interface
+
+```ts
+interface GridStyles {
+  cell?: string;       // CSS class for data cells
+  selected?: string;   // CSS class for selected cells (overrides default)
+  fillTarget?: string; // CSS class for fill target cells (overrides default)
+  fillHandle?: string; // CSS class for fill handle (overrides default)
+  colGroup?: string;   // CSS class for column group headers
+  colHeader?: string;  // CSS class for individual column headers
+  rowHeader?: string;  // CSS class for row headers
+}
+```
+
+### Styling Individual Headers
 
 Style individual column headers and groups:
 
@@ -242,7 +312,3 @@ interface ExcelGridProps {
   styles?: GridStyles;
 }
 ```
-
-## Styling
-
-The component uses Tailwind CSS classes. Make sure Tailwind CSS is configured in your project, or override styles using the `styles` prop.
