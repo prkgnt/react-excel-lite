@@ -16,21 +16,13 @@ A lightweight, Excel-like editable grid component for React.
 - Grouped column headers with custom styling
 - Row headers with custom styling
 - Keyboard shortcuts (Delete/Backspace to clear)
-
-## Requirements
-
-| Dependency   | Version   |
-| ------------ | --------- |
-| React        | >= 18.0.0 |
-| Tailwind CSS | >= 3.0.0  |
+- Zero external dependencies
 
 ## Installation
 
 ```bash
 npm install react-excel-lite
 ```
-
-> **Note:** This component uses Tailwind CSS classes for styling. Make sure Tailwind CSS is configured in your project.
 
 ## Quick Start
 
@@ -51,15 +43,15 @@ function App() {
 
 ## Props
 
-| Prop             | Type                         | Required | Description                |
-| ---------------- | ---------------------------- | -------- | -------------------------- |
-| `data`           | `string[][]`                 | Yes      | 2D array of strings        |
-| `onChange`       | `(data: string[][]) => void` | Yes      | Callback when data changes |
-| `rowHeaders`     | `RowHeaderGroup[]`           | No       | Row header definitions     |
-| `colHeaders`     | `ColHeaderGroup[]`           | No       | Grouped column headers     |
-| `className`      | `string`                     | No       | CSS class for container    |
-| `rowHeaderTitle` | `string`                     | No       | Title for row header column|
-| `styles`         | `GridStyles`                 | No       | Style configuration object |
+| Prop             | Type                         | Required | Description                 |
+| ---------------- | ---------------------------- | -------- | --------------------------- |
+| `data`           | `string[][]`                 | Yes      | 2D array of strings         |
+| `onChange`       | `(data: string[][]) => void` | Yes      | Callback when data changes  |
+| `rowHeaders`     | `RowHeaderGroup[]`           | No       | Row header definitions      |
+| `colHeaders`     | `ColHeaderGroup[]`           | No       | Grouped column headers      |
+| `className`      | `string`                     | No       | CSS class for container     |
+| `rowHeaderTitle` | `string`                     | No       | Title for row header column |
+| `styles`         | `GridStyles`                 | No       | Style configuration object  |
 
 ## With Headers
 
@@ -125,7 +117,7 @@ const styles: GridStyles = {
   rowHeader: "bg-slate-200",
 };
 
-<ExcelGrid data={data} onChange={setData} styles={styles} />
+<ExcelGrid data={data} onChange={setData} styles={styles} />;
 ```
 
 Style individual column headers and groups:
@@ -253,23 +245,4 @@ interface ExcelGridProps {
 
 ## Styling
 
-This component uses [Tailwind CSS](https://tailwindcss.com/) classes for styling.
-
-### Tailwind CSS Setup
-
-Make sure to include the library in your Tailwind content configuration:
-
-```js
-// tailwind.config.js
-module.exports = {
-  content: [
-    // ... your other content paths
-    "./node_modules/react-excel-lite/**/*.{js,ts,jsx,tsx}",
-  ],
-  // ...
-};
-```
-
-### Custom Styles
-
-Use the `styles` prop to override default styles with your own Tailwind classes.
+The component uses Tailwind CSS classes. Make sure Tailwind CSS is configured in your project, or override styles using the `styles` prop.
