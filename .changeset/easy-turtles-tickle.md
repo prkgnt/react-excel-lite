@@ -1,5 +1,5 @@
 ---
-"react-excel-lite-root": patch
+"react-excel-lite": major
 ---
 
 Add core grid components (ExcelGrid, GridCell) with Excel-like functionality
