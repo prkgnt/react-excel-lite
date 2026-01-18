@@ -15,20 +15,55 @@ export interface SelectionRange {
 }
 
 /**
- * Header definition
+ * Column header definition
  */
-export interface HeaderDefinition {
+export interface ColHeader {
   key: string;
   label: string;
   description?: string;
+  /** Custom class name for this header cell */
+  className?: string;
 }
 
 /**
- * Header group
+ * Column header group
  */
-export interface HeaderGroup {
+export interface ColHeaderGroup {
   label: string;
-  headers: HeaderDefinition[];
+  headers: ColHeader[];
+  /** Custom class name for this group header */
+  className?: string;
+}
+
+/**
+ * Row header group
+ */
+export interface RowHeaderGroup {
+  key: string;
+  label: string;
+  description?: string;
+  /** Custom class name for this row header */
+  className?: string;
+}
+
+/**
+ * Grid styles configuration
+ */
+export interface GridStyles {
+  /** Data cell style */
+  cell?: string;
+  /** Selected cell style */
+  selected?: string;
+  /** Fill target cell style (when dragging fill handle) */
+  fillTarget?: string;
+  /** Fill handle style (bottom-right corner handle) */
+  fillHandle?: string;
+  /** Column group header style */
+  colGroup?: string;
+  /** Column header style */
+  colHeader?: string;
+  /** Row header style */
+  rowHeader?: string;
 }
 
 /**
@@ -39,14 +74,16 @@ export interface ExcelGridProps {
   data: string[][];
   /** Data change callback */
   onChange: (data: string[][]) => void;
-  /** Row header labels array */
-  rowHeaders?: string[];
-  /** Header group definitions */
-  headerGroups?: HeaderGroup[];
-  /** Additional class name */
+  /** Row header definitions (overridable per row) */
+  rowHeaders?: RowHeaderGroup[];
+  /** Column header group definitions */
+  colHeaders?: ColHeaderGroup[];
+  /** Additional class name for container */
   className?: string;
   /** Row header column title */
   rowHeaderTitle?: string;
+  /** Style configuration */
+  styles?: GridStyles;
 }
 
 /**
@@ -62,4 +99,6 @@ export interface GridCellProps {
   onMouseEnter: (coord: CellCoord) => void;
   onChange: (coord: CellCoord, value: string) => void;
   onFillHandleMouseDown: (coord: CellCoord) => void;
+  /** Cell styles */
+  styles?: Pick<GridStyles, "cell" | "selected" | "fillTarget" | "fillHandle">;
 }

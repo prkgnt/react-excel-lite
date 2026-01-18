@@ -11,29 +11,30 @@ export function ExcelGrid({
   data,
   onChange,
   rowHeaders,
-  headerGroups,
+  colHeaders,
   className,
   rowHeaderTitle = "",
+  styles,
 }: ExcelGridProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Calculate grid size
   const rowCount = data.length;
   const colCount = useMemo(() => {
-    if (headerGroups) {
-      return headerGroups.reduce(
+    if (colHeaders) {
+      return colHeaders.reduce(
         (sum, group) => sum + group.headers.length,
         0
       );
     }
     return data[0]?.length ?? 0;
-  }, [headerGroups, data]);
+  }, [colHeaders, data]);
 
   // Flatten all headers
   const flatHeaders = useMemo(() => {
-    if (!headerGroups) return [];
-    return headerGroups.flatMap((group) => group.headers);
-  }, [headerGroups]);
+    if (!colHeaders) return [];
+    return colHeaders.flatMap((group) => group.headers);
+  }, [colHeaders]);
 
   // Get value from grid coordinate
   const getValue = useCallback(
@@ -159,20 +160,29 @@ export function ExcelGrid({
       <table className="border-collapse text-xs select-none">
         <thead>
           {/* Group header row */}
-          {headerGroups && (
+          {colHeaders && (
             <tr>
               {/* Row header column */}
               {rowHeaders && (
-                <th className="sticky left-0 z-10 bg-gray-100 border border-gray-300 px-2 py-1.5 text-center font-medium">
+                <th
+                  className={cn(
+                    "sticky left-0 z-10 bg-gray-100 border border-gray-300 px-2 py-1.5 text-center font-medium",
+                    styles?.rowHeader
+                  )}
+                >
                   {rowHeaderTitle}
                 </th>
               )}
               {/* Group headers */}
-              {headerGroups.map((group, groupIndex) => (
+              {colHeaders.map((group, groupIndex) => (
                 <th
                   key={groupIndex}
                   colSpan={group.headers.length}
-                  className="bg-blue-100 border border-gray-300 px-1 py-1.5 text-center font-medium text-blue-700"
+                  className={cn(
+                    "bg-blue-100 border border-gray-300 px-1 py-1.5 text-center font-medium text-blue-700",
+                    styles?.colGroup,
+                    group.className
+                  )}
                 >
                   {group.label}
                 </th>
@@ -180,17 +190,26 @@ export function ExcelGrid({
             </tr>
           )}
           {/* Individual header row */}
-          {headerGroups && (
+          {colHeaders && (
             <tr>
               {/* Empty cell */}
               {rowHeaders && (
-                <th className="sticky left-0 z-10 bg-gray-100 border border-gray-300 px-2 py-1"></th>
+                <th
+                  className={cn(
+                    "sticky left-0 z-10 bg-gray-100 border border-gray-300 px-2 py-1",
+                    styles?.rowHeader
+                  )}
+                ></th>
               )}
               {/* Individual headers */}
               {flatHeaders.map((header) => (
                 <th
                   key={header.key}
-                  className="bg-gray-50 border border-gray-300 px-1 py-1 text-center font-medium text-[11px]"
+                  className={cn(
+                    "bg-gray-50 border border-gray-300 px-1 py-1 text-center font-medium text-[11px]",
+                    styles?.colHeader,
+                    header.className
+                  )}
                   title={header.description}
                 >
                   {header.label}
@@ -203,9 +222,16 @@ export function ExcelGrid({
           {data.map((row, rowIndex) => (
             <tr key={rowIndex}>
               {/* Row header */}
-              {rowHeaders && (
-                <td className="sticky left-0 z-10 bg-gray-100 border border-gray-300 px-1 py-1.5 text-center font-medium">
-                  {rowHeaders[rowIndex]}
+              {rowHeaders && rowHeaders[rowIndex] && (
+                <td
+                  className={cn(
+                    "sticky left-0 z-10 bg-gray-100 border border-gray-300 px-1 py-1.5 text-center font-medium",
+                    styles?.rowHeader,
+                    rowHeaders[rowIndex].className
+                  )}
+                  title={rowHeaders[rowIndex].description}
+                >
+                  {rowHeaders[rowIndex].label}
                 </td>
               )}
               {/* Data cells */}
@@ -227,6 +253,7 @@ export function ExcelGrid({
                     onMouseEnter={handleCellEnter}
                     onChange={handleCellChange}
                     onFillHandleMouseDown={handleFillHandleMouseDown}
+                    styles={styles}
                   />
                 );
               })}

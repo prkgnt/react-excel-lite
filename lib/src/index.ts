@@ -25,8 +25,10 @@ export {
 export type {
   CellCoord,
   SelectionRange,
-  HeaderDefinition,
-  HeaderGroup,
+  ColHeader,
+  ColHeaderGroup,
+  RowHeaderGroup,
+  GridStyles,
   ExcelGridProps,
   GridCellProps,
 } from "./types";

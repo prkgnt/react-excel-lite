@@ -70,16 +70,14 @@ export function useGridDragFill({
   const [fillSource, setFillSource] = useState<CellCoord | null>(null);
   const [fillTargets, setFillTargets] = useState<CellCoord[]>([]);
   const [isDraggingFill, setIsDraggingFill] = useState(false);
-  const [dragDirection, setDragDirection] = useState<
-    "down" | "up" | "right" | "left" | null
-  >(null);
+  const [fillEnd, setFillEnd] = useState<CellCoord | null>(null);
 
   // Start fill handle drag
   const handleFillHandleMouseDown = useCallback((sourceCoord: CellCoord) => {
     setFillSource(sourceCoord);
     setIsDraggingFill(true);
     setFillTargets([]);
-    setDragDirection(null);
+    setFillEnd(null);
   }, []);
 
   // Update targets when entering cell during drag
@@ -90,69 +88,30 @@ export function useGridDragFill({
       const normalized = normalizeRange(selection);
       if (!normalized.start || !normalized.end) return;
 
-      // Determine drag direction based on cursor position relative to selection
-      let direction: "down" | "up" | "right" | "left" | null = null;
+      setFillEnd(coord);
 
-      if (coord.row > normalized.end.row) {
-        direction = "down";
-      } else if (coord.row < normalized.start.row) {
-        direction = "up";
-      } else if (coord.col > normalized.end.col) {
-        direction = "right";
-      } else if (coord.col < normalized.start.col) {
-        direction = "left";
-      }
+      // Calculate the extended range (selection + fill area)
+      const extendedStart = {
+        row: Math.min(normalized.start.row, coord.row),
+        col: Math.min(normalized.start.col, coord.col),
+      };
+      const extendedEnd = {
+        row: Math.max(normalized.end.row, coord.row),
+        col: Math.max(normalized.end.col, coord.col),
+      };
 
-      setDragDirection(direction);
-
-      // Calculate fill targets based on direction
-      let targets: CellCoord[] = [];
-
-      if (direction === "down") {
-        for (
-          let row = normalized.end.row + 1;
-          row <= coord.row;
-          row++
-        ) {
-          for (
-            let col = normalized.start.col;
+      // Fill targets = extended range - original selection
+      const targets: CellCoord[] = [];
+      for (let row = extendedStart.row; row <= extendedEnd.row; row++) {
+        for (let col = extendedStart.col; col <= extendedEnd.col; col++) {
+          // Skip cells that are in the original selection
+          const isInSelection =
+            row >= normalized.start.row &&
+            row <= normalized.end.row &&
+            col >= normalized.start.col &&
             col <= normalized.end.col;
-            col++
-          ) {
-            targets.push({ row, col });
-          }
-        }
-      } else if (direction === "up") {
-        for (let row = normalized.start.row - 1; row >= coord.row; row--) {
-          for (
-            let col = normalized.start.col;
-            col <= normalized.end.col;
-            col++
-          ) {
-            targets.push({ row, col });
-          }
-        }
-      } else if (direction === "right") {
-        for (
-          let col = normalized.end.col + 1;
-          col <= coord.col;
-          col++
-        ) {
-          for (
-            let row = normalized.start.row;
-            row <= normalized.end.row;
-            row++
-          ) {
-            targets.push({ row, col });
-          }
-        }
-      } else if (direction === "left") {
-        for (let col = normalized.start.col - 1; col >= coord.col; col--) {
-          for (
-            let row = normalized.start.row;
-            row <= normalized.end.row;
-            row++
-          ) {
+
+          if (!isInSelection) {
             targets.push({ row, col });
           }
         }
@@ -165,11 +124,11 @@ export function useGridDragFill({
 
   // Apply fill values on drag end
   const handleFillMouseUp = useCallback(() => {
-    if (!selection.start || fillTargets.length === 0) {
+    if (!selection.start || fillTargets.length === 0 || !fillEnd) {
       setFillSource(null);
       setFillTargets([]);
       setIsDraggingFill(false);
-      setDragDirection(null);
+      setFillEnd(null);
       return;
     }
 
@@ -178,111 +137,93 @@ export function useGridDragFill({
       setFillSource(null);
       setFillTargets([]);
       setIsDraggingFill(false);
-      setDragDirection(null);
+      setFillEnd(null);
       return;
     }
 
     const updates: { coord: CellCoord; value: string }[] = [];
 
-    // Determine if we're filling by row or column
-    const isVertical = dragDirection === "down" || dragDirection === "up";
-    const isReverse = dragDirection === "up" || dragDirection === "left";
+    // Use non-null assertion since we already checked above
+    const selStart = normalized.start!;
+    const selEnd = normalized.end!;
 
-    if (isVertical) {
-      // For each column, get source values and apply pattern
-      for (
-        let col = normalized.start.col;
-        col <= normalized.end.col;
-        col++
-      ) {
-        const sourceValues: string[] = [];
-        for (
-          let row = normalized.start.row;
-          row <= normalized.end.row;
-          row++
-        ) {
-          sourceValues.push(getValue({ row, col }));
-        }
+    // Source dimensions
+    const sourceRows = selEnd.row - selStart.row + 1;
+    const sourceCols = selEnd.col - selStart.col + 1;
 
-        const sequence = detectArithmeticSequence(sourceValues);
-        const targetCells = fillTargets.filter((t) => t.col === col);
+    // For each target cell, calculate value based on pattern
+    fillTargets.forEach((target) => {
+      // Determine which source cell to use (with wrapping)
+      let sourceRow: number;
+      let sourceCol: number;
 
-        if (isReverse) {
-          targetCells.reverse();
-        }
-
-        targetCells.forEach((target, index) => {
-          let value: string;
-
-          if (sequence && sequence.diff !== 0) {
-            // Arithmetic sequence
-            const lastNum = isReverse
-              ? sequence.numbers[0]
-              : sequence.numbers[sequence.numbers.length - 1];
-            const newNum = isReverse
-              ? lastNum - sequence.diff * (index + 1)
-              : lastNum + sequence.diff * (index + 1);
-            value = String(newNum);
-          } else {
-            // Just repeat the pattern
-            const patternIndex = index % sourceValues.length;
-            const actualIndex = isReverse
-              ? sourceValues.length - 1 - patternIndex
-              : patternIndex;
-            value = sourceValues[actualIndex];
-          }
-
-          updates.push({ coord: target, value });
-        });
+      // Handle row direction
+      if (target.row < selStart.row) {
+        // Above selection - map backwards
+        const offset = selStart.row - target.row;
+        sourceRow = selEnd.row - ((offset - 1) % sourceRows);
+      } else if (target.row > selEnd.row) {
+        // Below selection - map forwards
+        const offset = target.row - selEnd.row;
+        sourceRow = selStart.row + ((offset - 1) % sourceRows);
+      } else {
+        sourceRow = target.row;
       }
-    } else {
-      // Horizontal fill - for each row
-      for (
-        let row = normalized.start.row;
-        row <= normalized.end.row;
-        row++
-      ) {
-        const sourceValues: string[] = [];
-        for (
-          let col = normalized.start.col;
-          col <= normalized.end.col;
-          col++
-        ) {
-          sourceValues.push(getValue({ row, col }));
-        }
 
-        const sequence = detectArithmeticSequence(sourceValues);
-        const targetCells = fillTargets.filter((t) => t.row === row);
-
-        if (isReverse) {
-          targetCells.reverse();
-        }
-
-        targetCells.forEach((target, index) => {
-          let value: string;
-
-          if (sequence && sequence.diff !== 0) {
-            // Arithmetic sequence
-            const lastNum = isReverse
-              ? sequence.numbers[0]
-              : sequence.numbers[sequence.numbers.length - 1];
-            const newNum = isReverse
-              ? lastNum - sequence.diff * (index + 1)
-              : lastNum + sequence.diff * (index + 1);
-            value = String(newNum);
-          } else {
-            // Just repeat the pattern
-            const patternIndex = index % sourceValues.length;
-            const actualIndex = isReverse
-              ? sourceValues.length - 1 - patternIndex
-              : patternIndex;
-            value = sourceValues[actualIndex];
-          }
-
-          updates.push({ coord: target, value });
-        });
+      // Handle column direction
+      if (target.col < selStart.col) {
+        // Left of selection - map backwards
+        const offset = selStart.col - target.col;
+        sourceCol = selEnd.col - ((offset - 1) % sourceCols);
+      } else if (target.col > selEnd.col) {
+        // Right of selection - map forwards
+        const offset = target.col - selEnd.col;
+        sourceCol = selStart.col + ((offset - 1) % sourceCols);
+      } else {
+        sourceCol = target.col;
       }
-    }
+
+      // Check for arithmetic sequence in the relevant direction
+      let value = getValue({ row: sourceRow, col: sourceCol });
+
+      // Try vertical sequence if target is above/below
+      if (target.row !== sourceRow && target.col >= selStart.col && target.col <= selEnd.col) {
+        const colValues: string[] = [];
+        for (let r = selStart.row; r <= selEnd.row; r++) {
+          colValues.push(getValue({ row: r, col: target.col }));
+        }
+        const sequence = detectArithmeticSequence(colValues);
+        if (sequence && sequence.diff !== 0) {
+          if (target.row > selEnd.row) {
+            const steps = target.row - selEnd.row;
+            value = String(sequence.numbers[sequence.numbers.length - 1] + sequence.diff * steps);
+          } else if (target.row < selStart.row) {
+            const steps = selStart.row - target.row;
+            value = String(sequence.numbers[0] - sequence.diff * steps);
+          }
+        }
+      }
+
+      // Try horizontal sequence if target is left/right
+      if (target.col !== sourceCol && target.row >= selStart.row && target.row <= selEnd.row) {
+        const rowValues: string[] = [];
+        for (let c = selStart.col; c <= selEnd.col; c++) {
+          rowValues.push(getValue({ row: target.row, col: c }));
+        }
+        const sequence = detectArithmeticSequence(rowValues);
+        if (sequence && sequence.diff !== 0) {
+          if (target.col > selEnd.col) {
+            const steps = target.col - selEnd.col;
+            value = String(sequence.numbers[sequence.numbers.length - 1] + sequence.diff * steps);
+          } else if (target.col < selStart.col) {
+            const steps = selStart.col - target.col;
+            value = String(sequence.numbers[0] - sequence.diff * steps);
+          }
+        }
+      }
+
+      updates.push({ coord: target, value });
+    });
 
     if (updates.length > 0) {
       setValues(updates);
@@ -291,8 +232,8 @@ export function useGridDragFill({
     setFillSource(null);
     setFillTargets([]);
     setIsDraggingFill(false);
-    setDragDirection(null);
-  }, [selection, fillTargets, dragDirection, getValue, setValues]);
+    setFillEnd(null);
+  }, [selection, fillTargets, fillEnd, getValue, setValues]);
 
   // Check if cell is fill target
   const isFillTarget = useCallback(

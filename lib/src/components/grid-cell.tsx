@@ -11,6 +11,7 @@ export function GridCell({
   onMouseEnter,
   onChange,
   onFillHandleMouseDown,
+  styles,
 }: GridCellProps) {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(coord, e.target.value);
@@ -33,8 +34,10 @@ export function GridCell({
     <td
       className={cn(
         "relative border border-gray-300 p-0",
-        isSelected && "bg-blue-100 ring-2 ring-inset ring-blue-500",
-        isFillTarget && "bg-blue-50"
+        styles?.cell,
+        isSelected &&
+          (styles?.selected ?? "bg-blue-100 ring-2 ring-inset ring-blue-500"),
+        isFillTarget && (styles?.fillTarget ?? "bg-blue-50")
       )}
       onMouseDown={handleMouseDownCell}
       onMouseEnter={() => onMouseEnter(coord)}
@@ -51,7 +54,10 @@ export function GridCell({
       {/* Fill handle */}
       {showFillHandle && (
         <div
-          className="fill-handle absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-blue-500 cursor-crosshair z-20"
+          className={cn(
+            "fill-handle absolute -bottom-0.5 -right-0.5 w-2 h-2 cursor-crosshair z-20",
+            styles?.fillHandle ?? "bg-blue-500"
+          )}
           onMouseDown={handleFillHandleDown}
         />
       )}
