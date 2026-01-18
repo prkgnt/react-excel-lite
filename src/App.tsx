@@ -1,13 +1,35 @@
 import { useState } from "react";
 import { ExcelGrid } from "react-excel-lite";
-import type { HeaderGroup } from "react-excel-lite";
+import type {
+  ColHeaderGroup,
+  RowHeaderGroup,
+  GridStyles,
+} from "react-excel-lite";
 
 function App() {
-  // Basic example data
-  const [basicData, setBasicData] = useState([
-    ["1000", "2000", "3000"],
-    ["4000", "5000", "6000"],
-    ["7000", "8000", "9000"],
+  // Selection example data
+  const [selectionData, setSelectionData] = useState([
+    ["A", "B", "C", "D"],
+    ["E", "F", "G", "H"],
+    ["I", "J", "K", "L"],
+    ["M", "N", "O", "P"],
+  ]);
+
+  // Copy/Paste example data
+  const [pasteData, setPasteData] = useState([
+    ["", "", ""],
+    ["", "", ""],
+    ["", "", ""],
+  ]);
+
+  // Auto Fill example data (vertical patterns for dragging down)
+  const [fillData, setFillData] = useState([
+    ["1", "100", "10"],
+    ["2", "200", "8"],
+    ["3", "300", "6"],
+    ["", "", ""],
+    ["", "", ""],
+    ["", "", ""],
   ]);
 
   // Advanced example data
@@ -18,7 +40,7 @@ function App() {
     ["5600", "6100", "5200", "6800", "4900", "7200"],
   ]);
 
-  const headerGroups: HeaderGroup[] = [
+  const colHeaders: ColHeaderGroup[] = [
     {
       label: "Q1 2025",
       headers: [
@@ -37,7 +59,97 @@ function App() {
     },
   ];
 
-  const rowHeaders = ["Product A", "Product B", "Product C", "Product D"];
+  const rowHeaders: RowHeaderGroup[] = [
+    { key: "prodA", label: "Product A", description: "Main product line" },
+    { key: "prodB", label: "Product B", description: "Secondary product" },
+    { key: "prodC", label: "Product C", description: "Budget line" },
+    { key: "prodD", label: "Product D", description: "Premium line" },
+  ];
+
+  // Custom styling example data
+  const [styledData, setStyledData] = useState([
+    ["1200", "1500", "1800", "2100"],
+    ["800", "950", "1100", "1250"],
+    ["2500", "2800", "3100", "3400"],
+  ]);
+
+  const styledColHeaders: ColHeaderGroup[] = [
+    {
+      label: "Revenue",
+      className: "bg-emerald-100 text-emerald-700",
+      headers: [
+        { key: "q1r", label: "Q1", className: "bg-emerald-50" },
+        { key: "q2r", label: "Q2", className: "bg-emerald-50" },
+      ],
+    },
+    {
+      label: "Cost",
+      className: "bg-rose-100 text-rose-700",
+      headers: [
+        { key: "q1c", label: "Q1", className: "bg-rose-50" },
+        { key: "q2c", label: "Q2", className: "bg-rose-50" },
+      ],
+    },
+  ];
+
+  const styledRowHeaders: RowHeaderGroup[] = [
+    {
+      key: "regionA",
+      label: "Region A",
+      description: "North America",
+      className: "bg-slate-700 text-white",
+    },
+    {
+      key: "regionB",
+      label: "Region B",
+      description: "Europe",
+      className: "bg-slate-600 text-white",
+    },
+    {
+      key: "regionC",
+      label: "Region C",
+      description: "Asia Pacific",
+      className: "bg-slate-500 text-white",
+    },
+  ];
+
+  // Style theme examples
+  const purpleTheme: GridStyles = {
+    selected: "bg-purple-100 ring-2 ring-inset ring-purple-500",
+    fillTarget: "bg-purple-50",
+    fillHandle: "bg-purple-500",
+  };
+
+  const greenTheme: GridStyles = {
+    selected: "bg-emerald-100 ring-2 ring-inset ring-emerald-500",
+    fillTarget: "bg-emerald-50",
+    fillHandle: "bg-emerald-500",
+  };
+
+  const orangeTheme: GridStyles = {
+    selected: "bg-orange-100 ring-2 ring-inset ring-orange-500",
+    fillTarget: "bg-orange-50",
+    fillHandle: "bg-orange-500",
+  };
+
+  // Data for style demos
+  const [purpleData, setPurpleData] = useState([
+    ["1", "2", "3"],
+    ["4", "5", "6"],
+    ["", "", ""],
+  ]);
+
+  const [greenData, setGreenData] = useState([
+    ["A", "B", "C"],
+    ["D", "E", "F"],
+    ["", "", ""],
+  ]);
+
+  const [orangeData, setOrangeData] = useState([
+    ["100", "200", "300"],
+    ["400", "500", "600"],
+    ["", "", ""],
+  ]);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -106,35 +218,149 @@ function App() {
           <span className="mx-2 text-slate-300">·</span>
           <span>Auto Fill</span>
           <span className="mx-2 text-slate-300">·</span>
-          <span>Headers</span>
-          <span className="mx-2 text-slate-300">·</span>
-          <span>Row Labels</span>
-          <span className="mx-2 text-slate-300">·</span>
-          <span>Keyboard Shortcuts</span>
+          <span>Headers | Row Labels</span>
         </section>
 
-        {/* Basic Example */}
+        {/* Installation */}
+        <section>
+          <h2 className="text-xl font-semibold text-slate-900 mb-4">
+            Installation
+          </h2>
+          <div className="bg-slate-900 rounded-lg p-4">
+            <pre className="text-sm text-slate-300">
+              <code>npm install react-excel-lite</code>
+            </pre>
+          </div>
+        </section>
+
+        {/* Selection Test */}
         <section>
           <h2 className="text-xl font-semibold text-slate-900 mb-2">
-            Basic Example
+            Selection
           </h2>
           <p className="text-slate-500 mb-4">
-            Simple grid with editable cells. Try selecting multiple cells and
-            copy/paste.
+            Click and drag to select multiple cells. Selected cells are
+            highlighted in blue.
           </p>
-          <div className="bg-white rounded-lg border border-slate-200 p-6">
-            <ExcelGrid data={basicData} onChange={setBasicData} />
+          <div className="bg-white rounded-lg border border-slate-200 p-6 inline-block">
+            <ExcelGrid data={selectionData} onChange={setSelectionData} />
           </div>
-          <div className="mt-4 bg-slate-900 rounded-lg p-4 overflow-x-auto">
-            <pre className="text-sm text-slate-300">
-              <code>{`const [data, setData] = useState([
-  ["1000", "2000", "3000"],
-  ["4000", "5000", "6000"],
-  ["7000", "8000", "9000"],
-]);
+        </section>
 
-<ExcelGrid data={data} onChange={setData} />`}</code>
-            </pre>
+        {/* Copy/Paste Test */}
+        <section>
+          <h2 className="text-xl font-semibold text-slate-900 mb-2">
+            Copy / Paste
+          </h2>
+          <p className="text-slate-500 mb-4">
+            Select cells from the table below and paste into the grid. Use{" "}
+            <kbd className="px-1.5 py-0.5 bg-slate-200 rounded text-xs font-mono">
+              Ctrl+C
+            </kbd>{" "}
+            /{" "}
+            <kbd className="px-1.5 py-0.5 bg-slate-200 rounded text-xs font-mono">
+              Ctrl+V
+            </kbd>
+          </p>
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Sample data to copy */}
+            <div>
+              <p className="text-sm text-slate-500 mb-2">
+                Sample data (select and copy):
+              </p>
+              <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+                <table className="w-full text-sm border-collapse">
+                  <tbody>
+                    <tr>
+                      <td className="border border-slate-200 px-3 py-2 text-right">
+                        Apple
+                      </td>
+                      <td className="border border-slate-200 px-3 py-2 text-right">
+                        100
+                      </td>
+                      <td className="border border-slate-200 px-3 py-2 text-right">
+                        200
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="border border-slate-200 px-3 py-2 text-right">
+                        Banana
+                      </td>
+                      <td className="border border-slate-200 px-3 py-2 text-right">
+                        150
+                      </td>
+                      <td className="border border-slate-200 px-3 py-2 text-right">
+                        250
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="border border-slate-200 px-3 py-2 text-right">
+                        Cherry
+                      </td>
+                      <td className="border border-slate-200 px-3 py-2 text-right">
+                        300
+                      </td>
+                      <td className="border border-slate-200 px-3 py-2 text-right">
+                        400
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            {/* Grid to paste into */}
+            <div>
+              <p className="text-sm text-slate-500 mb-2">
+                Grid (click a cell and paste):
+              </p>
+              <div className="bg-white rounded-lg border border-slate-200 p-4">
+                <ExcelGrid data={pasteData} onChange={setPasteData} />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Auto Fill Test */}
+        <section>
+          <h2 className="text-xl font-semibold text-slate-900 mb-2">
+            Auto Fill (Arithmetic Sequence)
+          </h2>
+          <p className="text-slate-500 mb-4">
+            Select cells in a column (e.g., 1, 2, 3), then drag the blue handle
+            at the bottom-right corner downward.
+          </p>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div>
+              <p className="text-sm text-slate-500 mb-2">
+                Try selecting each column vertically:
+              </p>
+              <ul className="text-sm text-slate-600 space-y-1 mb-4">
+                <li>
+                  Column 1:{" "}
+                  <code className="bg-slate-100 px-1.5 py-0.5 rounded">
+                    1, 2, 3
+                  </code>{" "}
+                  → 4, 5, 6
+                </li>
+                <li>
+                  Column 2:{" "}
+                  <code className="bg-slate-100 px-1.5 py-0.5 rounded">
+                    100, 200, 300
+                  </code>{" "}
+                  → 400, 500, 600
+                </li>
+                <li>
+                  Column 3:{" "}
+                  <code className="bg-slate-100 px-1.5 py-0.5 rounded">
+                    10, 8, 6
+                  </code>{" "}
+                  → 4, 2, 0
+                </li>
+              </ul>
+            </div>
+            <div className="bg-white rounded-lg border border-slate-200 p-4">
+              <ExcelGrid data={fillData} onChange={setFillData} />
+            </div>
           </div>
         </section>
 
@@ -151,14 +377,14 @@ function App() {
             <ExcelGrid
               data={advancedData}
               onChange={setAdvancedData}
-              headerGroups={headerGroups}
+              colHeaders={colHeaders}
               rowHeaders={rowHeaders}
               rowHeaderTitle="Product"
             />
           </div>
           <div className="mt-4 bg-slate-900 rounded-lg p-4 overflow-x-auto">
             <pre className="text-sm text-slate-300">
-              <code>{`const headerGroups: HeaderGroup[] = [
+              <code>{`const colHeaders: ColHeaderGroup[] = [
   {
     label: "Q1 2025",
     headers: [
@@ -170,15 +396,169 @@ function App() {
   // ...
 ];
 
-const rowHeaders = ["Product A", "Product B", "Product C", "Product D"];
+const rowHeaders: RowHeaderGroup[] = [
+  { key: "prodA", label: "Product A", description: "Main product" },
+  { key: "prodB", label: "Product B", description: "Secondary" },
+  // ...
+];
 
 <ExcelGrid
   data={data}
   onChange={setData}
-  headerGroups={headerGroups}
+  colHeaders={colHeaders}
   rowHeaders={rowHeaders}
   rowHeaderTitle="Product"
 />`}</code>
+            </pre>
+          </div>
+        </section>
+
+        {/* Custom Styling */}
+        <section>
+          <h2 className="text-xl font-semibold text-slate-900 mb-2">
+            Custom Styling
+          </h2>
+          <p className="text-slate-500 mb-6">
+            Use the <code className="bg-slate-100 px-1.5 py-0.5 rounded">styles</code> prop to customize selection, fill target, fill handle, and headers.
+          </p>
+
+          {/* GridStyles Reference */}
+          <div className="mb-8 bg-slate-800 rounded-lg p-5 overflow-x-auto">
+            <h3 className="text-sm font-medium text-slate-400 mb-3">
+              GridStyles Interface
+            </h3>
+            <pre className="text-sm text-slate-300">
+              <code>{`interface GridStyles {
+  cell?: string;       // 데이터 셀 기본 스타일
+  selected?: string;   // 선택된 셀 스타일
+  fillTarget?: string; // 채우기 대상 셀 스타일
+  fillHandle?: string; // 우하단 드래그 핸들 스타일
+  colGroup?: string;   // 컬럼 그룹 헤더 스타일
+  colHeader?: string;  // 컬럼 헤더 스타일
+  rowHeader?: string;  // 로우 헤더 스타일
+}`}</code>
+            </pre>
+          </div>
+
+          {/* Theme Examples */}
+          <h3 className="text-lg font-medium text-slate-800 mb-4">
+            Color Themes
+          </h3>
+          <p className="text-slate-500 mb-4">
+            Click cells to see selection styles. Drag the handle at the bottom-right corner to see fill styles.
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-6 mb-6">
+            {/* Purple Theme */}
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-3 h-3 rounded-full bg-purple-500" />
+                <span className="text-sm font-medium text-slate-700">Purple</span>
+              </div>
+              <div className="bg-white rounded-lg border border-slate-200 p-4">
+                <ExcelGrid
+                  data={purpleData}
+                  onChange={setPurpleData}
+                  styles={purpleTheme}
+                />
+              </div>
+            </div>
+
+            {/* Green Theme */}
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-3 h-3 rounded-full bg-emerald-500" />
+                <span className="text-sm font-medium text-slate-700">Green</span>
+              </div>
+              <div className="bg-white rounded-lg border border-slate-200 p-4">
+                <ExcelGrid
+                  data={greenData}
+                  onChange={setGreenData}
+                  styles={greenTheme}
+                />
+              </div>
+            </div>
+
+            {/* Orange Theme */}
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-3 h-3 rounded-full bg-orange-500" />
+                <span className="text-sm font-medium text-slate-700">Orange</span>
+              </div>
+              <div className="bg-white rounded-lg border border-slate-200 p-4">
+                <ExcelGrid
+                  data={orangeData}
+                  onChange={setOrangeData}
+                  styles={orangeTheme}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-10 bg-slate-900 rounded-lg p-4 overflow-x-auto">
+            <pre className="text-sm text-slate-300">
+              <code>{`const purpleTheme: GridStyles = {
+  selected: "bg-purple-100 ring-2 ring-inset ring-purple-500",
+  fillTarget: "bg-purple-50",
+  fillHandle: "bg-purple-500",
+};
+
+const greenTheme: GridStyles = {
+  selected: "bg-emerald-100 ring-2 ring-inset ring-emerald-500",
+  fillTarget: "bg-emerald-50",
+  fillHandle: "bg-emerald-500",
+};
+
+const orangeTheme: GridStyles = {
+  selected: "bg-orange-100 ring-2 ring-inset ring-orange-500",
+  fillTarget: "bg-orange-50",
+  fillHandle: "bg-orange-500",
+};`}</code>
+            </pre>
+          </div>
+
+          {/* Header styling example */}
+          <h3 className="text-lg font-medium text-slate-800 mb-4">
+            Header Styling
+          </h3>
+          <p className="text-slate-500 mb-4">
+            Use <code className="bg-slate-100 px-1.5 py-0.5 rounded">className</code> on individual headers/groups for fine-grained control.
+          </p>
+          <div className="bg-white rounded-lg border border-slate-200 p-6 overflow-x-auto">
+            <ExcelGrid
+              data={styledData}
+              onChange={setStyledData}
+              colHeaders={styledColHeaders}
+              rowHeaders={styledRowHeaders}
+              rowHeaderTitle="Region"
+            />
+          </div>
+          <div className="mt-4 bg-slate-900 rounded-lg p-4 overflow-x-auto">
+            <pre className="text-sm text-slate-300">
+              <code>{`const colHeaders: ColHeaderGroup[] = [
+  {
+    label: "Revenue",
+    className: "bg-emerald-100 text-emerald-700",  // 그룹 스타일
+    headers: [
+      { key: "q1r", label: "Q1", className: "bg-emerald-50" },  // 개별 헤더 스타일
+      { key: "q2r", label: "Q2", className: "bg-emerald-50" },
+    ],
+  },
+  {
+    label: "Cost",
+    className: "bg-rose-100 text-rose-700",
+    headers: [
+      { key: "q1c", label: "Q1", className: "bg-rose-50" },
+      { key: "q2c", label: "Q2", className: "bg-rose-50" },
+    ],
+  },
+];
+
+const rowHeaders: RowHeaderGroup[] = [
+  { key: "regionA", label: "Region A", className: "bg-slate-700 text-white" },
+  { key: "regionB", label: "Region B", className: "bg-slate-600 text-white" },
+  { key: "regionC", label: "Region C", className: "bg-slate-500 text-white" },
+];`}</code>
             </pre>
           </div>
         </section>
@@ -245,18 +625,6 @@ const rowHeaders = ["Product A", "Product B", "Product C", "Product D"];
                 </tr>
               </tbody>
             </table>
-          </div>
-        </section>
-
-        {/* Installation */}
-        <section>
-          <h2 className="text-xl font-semibold text-slate-900 mb-4">
-            Installation
-          </h2>
-          <div className="bg-slate-900 rounded-lg p-4">
-            <pre className="text-sm text-slate-300">
-              <code>npm install react-excel-lite</code>
-            </pre>
           </div>
         </section>
       </main>
