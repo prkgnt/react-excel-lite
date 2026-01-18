@@ -1,5 +1,11 @@
 # react-excel-lite
 
+## 0.0.2
+
+### Patch Changes
+
+- 85e5481: Update description
+
 ## 1.0.0
 
 ### Major Changes
