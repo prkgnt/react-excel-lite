@@ -1,0 +1,33 @@
+{
+  "name": "react-excel-lite",
+  "version": "0.0.1",
+  "description": "Simple Excel-like editable grid component for React.",
+  "type": "module",
+  "main": "./dist/react-excel-lite.umd.cjs",
+  "module": "./dist/react-excel-lite.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/react-excel-lite.js",
+      "require": "./dist/react-excel-lite.umd.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc && vite build",
+    "dev": "vite build --watch"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.1.1",
+    "typescript": "~5.9.3",
+    "vite": "^7.2.4",
+    "vite-plugin-dts": "^4.5.4"
+  }
+}
