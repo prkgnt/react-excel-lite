@@ -1,6 +1,6 @@
 {
   "name": "react-excel-lite",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Simple Excel-like editable grid component for React.",
   "license": "MIT",
   "type": "module",
