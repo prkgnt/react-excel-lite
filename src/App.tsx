@@ -113,7 +113,7 @@ function App() {
     },
   ];
 
-  // Style theme examples
+  // Style theme examples (using Tailwind classes for demo)
   const purpleTheme: GridStyles = {
     selected: "bg-purple-100 ring-2 ring-inset ring-purple-500",
     fillTarget: "bg-purple-50",
@@ -167,7 +167,7 @@ function App() {
                 <span className="text-emerald-400">-lite</span>
               </h1>
               <p className="text-slate-400 text-lg max-w-md">
-                Excel-like grid for React. Lightweight.
+                Excel-like grid for React. Lightweight. Styling-agnostic.
               </p>
             </div>
             <div className="flex gap-3">
@@ -243,32 +243,17 @@ function App() {
                     </code>
                   </td>
                 </tr>
-                <tr>
-                  <td className="px-4 py-2 text-slate-700">Tailwind CSS</td>
-                  <td className="px-4 py-2">
-                    <code className="text-xs bg-slate-100 px-1.5 py-0.5 rounded">
-                      {">"}= 3.0.0
-                    </code>
-                  </td>
-                </tr>
               </tbody>
             </table>
           </div>
 
           <p className="mt-4 text-sm text-slate-500">
-            Add the library to your{" "}
+            The component comes with sensible default styles built-in. Use the{" "}
             <code className="bg-slate-100 px-1.5 py-0.5 rounded text-xs">
-              tailwind.config.js
+              styles
             </code>{" "}
-            content paths:
+            prop to customize with Tailwind, CSS Modules, or plain CSS classes.
           </p>
-          <div className="mt-2 bg-slate-900 rounded-lg p-4">
-            <pre className="text-sm text-slate-300">
-              <code>{`content: [
-  "./node_modules/react-excel-lite/**/*.{js,ts,jsx,tsx}",
-]`}</code>
-            </pre>
-          </div>
         </section>
 
         {/* Selection Test */}
@@ -459,7 +444,8 @@ const rowHeaders: RowHeaderGroup[] = [
           <p className="text-slate-500 mb-6">
             Use the{" "}
             <code className="bg-slate-100 px-1.5 py-0.5 rounded">styles</code>{" "}
-            prop to customize selection, fill target, fill handle, and headers.
+            prop with CSS class strings to customize selection, fill target, fill handle, and headers.
+            Works with Tailwind CSS, CSS Modules, or plain CSS.
           </p>
 
           {/* GridStyles Reference */}
@@ -469,20 +455,20 @@ const rowHeaders: RowHeaderGroup[] = [
             </h3>
             <pre className="text-sm text-slate-300">
               <code>{`interface GridStyles {
-  cell?: string;       // 데이터 셀 기본 스타일
-  selected?: string;   // 선택된 셀 스타일
-  fillTarget?: string; // 채우기 대상 셀 스타일
-  fillHandle?: string; // 우하단 드래그 핸들 스타일
-  colGroup?: string;   // 컬럼 그룹 헤더 스타일
-  colHeader?: string;  // 컬럼 헤더 스타일
-  rowHeader?: string;  // 로우 헤더 스타일
+  cell?: string;       // CSS class for data cells
+  selected?: string;   // CSS class for selected cells (overrides default)
+  fillTarget?: string; // CSS class for fill target cells (overrides default)
+  fillHandle?: string; // CSS class for fill handle (overrides default)
+  colGroup?: string;   // CSS class for column group headers
+  colHeader?: string;  // CSS class for column headers
+  rowHeader?: string;  // CSS class for row headers
 }`}</code>
             </pre>
           </div>
 
           {/* Theme Examples */}
           <h3 className="text-lg font-medium text-slate-800 mb-4">
-            Color Themes
+            Color Themes (Tailwind CSS)
           </h3>
           <p className="text-slate-500 mb-4">
             Click cells to see selection styles. Drag the handle at the
@@ -544,22 +530,26 @@ const rowHeaders: RowHeaderGroup[] = [
 
           <div className="mb-10 bg-slate-900 rounded-lg p-4 overflow-x-auto">
             <pre className="text-sm text-slate-300">
-              <code>{`const purpleTheme: GridStyles = {
+              <code>{`// Tailwind CSS example
+const purpleTheme: GridStyles = {
   selected: "bg-purple-100 ring-2 ring-inset ring-purple-500",
   fillTarget: "bg-purple-50",
   fillHandle: "bg-purple-500",
 };
 
-const greenTheme: GridStyles = {
-  selected: "bg-emerald-100 ring-2 ring-inset ring-emerald-500",
-  fillTarget: "bg-emerald-50",
-  fillHandle: "bg-emerald-500",
+// CSS Modules example
+import styles from "./grid.module.css";
+const moduleTheme: GridStyles = {
+  selected: styles.selectedCell,
+  fillTarget: styles.fillTarget,
+  fillHandle: styles.fillHandle,
 };
 
-const orangeTheme: GridStyles = {
-  selected: "bg-orange-100 ring-2 ring-inset ring-orange-500",
-  fillTarget: "bg-orange-50",
-  fillHandle: "bg-orange-500",
+// Plain CSS example
+const plainTheme: GridStyles = {
+  selected: "my-selected-cell",
+  fillTarget: "my-fill-target",
+  fillHandle: "my-fill-handle",
 };`}</code>
             </pre>
           </div>
@@ -589,9 +579,9 @@ const orangeTheme: GridStyles = {
               <code>{`const colHeaders: ColHeaderGroup[] = [
   {
     label: "Revenue",
-    className: "bg-emerald-100 text-emerald-700",  // 그룹 스타일
+    className: "bg-emerald-100 text-emerald-700",  // Group style
     headers: [
-      { key: "q1r", label: "Q1", className: "bg-emerald-50" },  // 개별 헤더 스타일
+      { key: "q1r", label: "Q1", className: "bg-emerald-50" },  // Individual header style
       { key: "q2r", label: "Q2", className: "bg-emerald-50" },
     ],
   },

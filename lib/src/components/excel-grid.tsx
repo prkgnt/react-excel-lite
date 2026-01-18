@@ -1,4 +1,5 @@
 import { useCallback, useRef, useMemo } from "react";
+import type { CSSProperties } from "react";
 import { cn } from "../utils/cn";
 import type { ExcelGridProps, CellCoord } from "../types";
 import { useGridSelection } from "../hooks/use-grid-selection";
@@ -6,6 +7,47 @@ import { useGridClipboard } from "../hooks/use-grid-clipboard";
 import { useGridDragFill } from "../hooks/use-grid-drag-fill";
 import { normalizeRange } from "../utils/grid-utils";
 import { GridCell } from "./grid-cell";
+
+// Base styles
+const containerBaseStyle: CSSProperties = {
+  outline: "none",
+  overflowX: "auto",
+};
+
+const tableBaseStyle: CSSProperties = {
+  borderCollapse: "collapse",
+  fontSize: "12px",
+  userSelect: "none",
+};
+
+const rowHeaderBaseStyle: CSSProperties = {
+  position: "sticky",
+  left: 0,
+  zIndex: 10,
+  backgroundColor: "#f3f4f6",
+  border: "1px solid #d1d5db",
+  padding: "6px 8px",
+  textAlign: "center",
+  fontWeight: 500,
+};
+
+const colGroupBaseStyle: CSSProperties = {
+  backgroundColor: "#dbeafe",
+  border: "1px solid #d1d5db",
+  padding: "6px 4px",
+  textAlign: "center",
+  fontWeight: 500,
+  color: "#1d4ed8",
+};
+
+const colHeaderBaseStyle: CSSProperties = {
+  backgroundColor: "#f9fafb",
+  border: "1px solid #d1d5db",
+  padding: "4px",
+  textAlign: "center",
+  fontWeight: 500,
+  fontSize: "11px",
+};
 
 export function ExcelGrid({
   data,
@@ -153,11 +195,12 @@ export function ExcelGrid({
   return (
     <div
       ref={containerRef}
-      className={cn("outline-none overflow-x-auto", className)}
+      className={className}
+      style={containerBaseStyle}
       tabIndex={0}
       onKeyDown={handleKeyDown}
     >
-      <table className="border-collapse text-xs select-none">
+      <table style={tableBaseStyle}>
         <thead>
           {/* Group header row */}
           {colHeaders && (
@@ -165,10 +208,8 @@ export function ExcelGrid({
               {/* Row header column */}
               {rowHeaders && (
                 <th
-                  className={cn(
-                    "sticky left-0 z-10 bg-gray-100 border border-gray-300 px-2 py-1.5 text-center font-medium",
-                    styles?.rowHeader
-                  )}
+                  className={styles?.rowHeader}
+                  style={rowHeaderBaseStyle}
                 >
                   {rowHeaderTitle}
                 </th>
@@ -178,11 +219,8 @@ export function ExcelGrid({
                 <th
                   key={groupIndex}
                   colSpan={group.headers.length}
-                  className={cn(
-                    "bg-blue-100 border border-gray-300 px-1 py-1.5 text-center font-medium text-blue-700",
-                    styles?.colGroup,
-                    group.className
-                  )}
+                  className={cn(styles?.colGroup, group.className)}
+                  style={colGroupBaseStyle}
                 >
                   {group.label}
                 </th>
@@ -195,21 +233,16 @@ export function ExcelGrid({
               {/* Empty cell */}
               {rowHeaders && (
                 <th
-                  className={cn(
-                    "sticky left-0 z-10 bg-gray-100 border border-gray-300 px-2 py-1",
-                    styles?.rowHeader
-                  )}
+                  className={styles?.rowHeader}
+                  style={rowHeaderBaseStyle}
                 ></th>
               )}
               {/* Individual headers */}
               {flatHeaders.map((header) => (
                 <th
                   key={header.key}
-                  className={cn(
-                    "bg-gray-50 border border-gray-300 px-1 py-1 text-center font-medium text-[11px]",
-                    styles?.colHeader,
-                    header.className
-                  )}
+                  className={cn(styles?.colHeader, header.className)}
+                  style={colHeaderBaseStyle}
                   title={header.description}
                 >
                   {header.label}
@@ -225,10 +258,10 @@ export function ExcelGrid({
               {rowHeaders && rowHeaders[rowIndex] && (
                 <td
                   className={cn(
-                    "sticky left-0 z-10 bg-gray-100 border border-gray-300 px-1 py-1.5 text-center font-medium",
                     styles?.rowHeader,
                     rowHeaders[rowIndex].className
                   )}
+                  style={rowHeaderBaseStyle}
                   title={rowHeaders[rowIndex].description}
                 >
                   {rowHeaders[rowIndex].label}

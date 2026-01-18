@@ -1,6 +1,3 @@
-// Styles
-import "./styles.css";
-
 // Components
 export { ExcelGrid } from "./components/excel-grid";
 export { GridCell } from "./components/grid-cell";

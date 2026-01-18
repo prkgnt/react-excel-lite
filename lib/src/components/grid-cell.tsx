@@ -1,5 +1,49 @@
 import { cn } from "../utils/cn";
 import type { GridCellProps } from "../types";
+import type { CSSProperties } from "react";
+
+// Base styles for cells
+const cellBaseStyle: CSSProperties = {
+  position: "relative",
+  border: "1px solid #d1d5db",
+  padding: 0,
+};
+
+const inputBaseStyle: CSSProperties = {
+  width: "100%",
+  height: "100%",
+  paddingLeft: "4px",
+  paddingRight: "4px",
+  paddingTop: "4px",
+  paddingBottom: "4px",
+  textAlign: "right",
+  fontSize: "12px",
+  backgroundColor: "transparent",
+  outline: "none",
+  cursor: "cell",
+};
+
+const fillHandleBaseStyle: CSSProperties = {
+  position: "absolute",
+  bottom: "-2px",
+  right: "-2px",
+  width: "8px",
+  height: "8px",
+  cursor: "crosshair",
+  zIndex: 20,
+  backgroundColor: "#3b82f6",
+};
+
+// Default styles when user doesn't provide custom styles
+const selectedDefaultStyle: CSSProperties = {
+  backgroundColor: "#dbeafe",
+  outline: "2px solid #3b82f6",
+  outlineOffset: "-2px",
+};
+
+const fillTargetDefaultStyle: CSSProperties = {
+  backgroundColor: "#eff6ff",
+};
 
 export function GridCell({
   coord,
@@ -30,15 +74,32 @@ export function GridCell({
     onFillHandleMouseDown(coord);
   };
 
+  // Determine if we should use default inline styles or user className
+  const hasCustomSelected = !!styles?.selected;
+  const hasCustomFillTarget = !!styles?.fillTarget;
+  const hasCustomFillHandle = !!styles?.fillHandle;
+
+  // Build cell style: base + conditional default styles
+  const cellStyle: CSSProperties = {
+    ...cellBaseStyle,
+    ...(isSelected && !hasCustomSelected ? selectedDefaultStyle : {}),
+    ...(isFillTarget && !hasCustomFillTarget ? fillTargetDefaultStyle : {}),
+  };
+
+  // Build fill handle style
+  const fillHandleStyle: CSSProperties = {
+    ...fillHandleBaseStyle,
+    ...(hasCustomFillHandle ? { backgroundColor: undefined } : {}),
+  };
+
   return (
     <td
       className={cn(
-        "relative border border-gray-300 p-0",
         styles?.cell,
-        isSelected &&
-          (styles?.selected ?? "bg-blue-100 ring-2 ring-inset ring-blue-500"),
-        isFillTarget && (styles?.fillTarget ?? "bg-blue-50")
+        isSelected && styles?.selected,
+        isFillTarget && styles?.fillTarget
       )}
+      style={cellStyle}
       onMouseDown={handleMouseDownCell}
       onMouseEnter={() => onMouseEnter(coord)}
     >
@@ -46,18 +107,13 @@ export function GridCell({
         type="text"
         value={value}
         onChange={handleInputChange}
-        className={cn(
-          "w-full h-full px-1 py-1 text-right text-xs bg-transparent outline-none cursor-cell",
-          isSelected && "bg-transparent"
-        )}
+        style={inputBaseStyle}
       />
       {/* Fill handle */}
       {showFillHandle && (
         <div
-          className={cn(
-            "fill-handle absolute -bottom-0.5 -right-0.5 w-2 h-2 cursor-crosshair z-20",
-            styles?.fillHandle ?? "bg-blue-500"
-          )}
+          className={cn("fill-handle", styles?.fillHandle)}
+          style={fillHandleStyle}
           onMouseDown={handleFillHandleDown}
         />
       )}
