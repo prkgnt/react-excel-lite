@@ -1,7 +1,7 @@
 {
   "name": "react-excel-lite",
   "version": "0.0.1",
-  "description": "Simple Excel-like editable grid component for React.",
+  "description": "A lightweight, Excel-like editable grid component for React with cell selection, copy/paste, auto-fill with arithmetic sequence detection, and customizable styling.",
   "license": "MIT",
   "type": "module",
   "main": "./dist/react-excel-lite.umd.cjs",
