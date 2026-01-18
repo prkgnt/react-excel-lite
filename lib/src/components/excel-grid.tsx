@@ -4,7 +4,6 @@ import type { ExcelGridProps, CellCoord } from "../types";
 import { useGridSelection } from "../hooks/use-grid-selection";
 import { useGridClipboard } from "../hooks/use-grid-clipboard";
 import { useGridDragFill } from "../hooks/use-grid-drag-fill";
-import { parseCurrency } from "../utils/format-utils";
 import { GridCell } from "./grid-cell";
 
 export function ExcelGrid({
@@ -37,17 +36,17 @@ export function ExcelGrid({
 
   // Get value from grid coordinate
   const getValue = useCallback(
-    (coord: CellCoord): number => {
-      if (coord.row < 0 || coord.row >= rowCount) return 0;
-      if (coord.col < 0 || coord.col >= colCount) return 0;
-      return data[coord.row]?.[coord.col] ?? 0;
+    (coord: CellCoord): string => {
+      if (coord.row < 0 || coord.row >= rowCount) return "";
+      if (coord.col < 0 || coord.col >= colCount) return "";
+      return data[coord.row]?.[coord.col] ?? "";
     },
     [data, rowCount, colCount]
   );
 
   // Set single cell value
   const setValue = useCallback(
-    (coord: CellCoord, value: number) => {
+    (coord: CellCoord, value: string) => {
       const newData = data.map((row, rowIndex) =>
         rowIndex === coord.row
           ? row.map((cell, colIndex) =>
@@ -62,7 +61,7 @@ export function ExcelGrid({
 
   // Set multiple cell values at once (batch update)
   const setValues = useCallback(
-    (updates: { coord: CellCoord; value: number }[]) => {
+    (updates: { coord: CellCoord; value: string }[]) => {
       if (updates.length === 0) return;
 
       const newData = data.map((row) => [...row]);
@@ -130,8 +129,7 @@ export function ExcelGrid({
   // Cell value change handler
   const handleCellChange = useCallback(
     (coord: CellCoord, inputValue: string) => {
-      const parsed = parseCurrency(inputValue);
-      setValue(coord, isNaN(parsed) ? 0 : parsed);
+      setValue(coord, inputValue);
     },
     [setValue]
   );
@@ -169,7 +167,7 @@ export function ExcelGrid({
                 <th
                   key={groupIndex}
                   colSpan={group.headers.length}
-                  className="bg-main/10 border border-gray-300 px-1 py-1.5 text-center font-medium text-main"
+                  className="bg-blue-100 border border-gray-300 px-1 py-1.5 text-center font-medium text-blue-700"
                 >
                   {group.label}
                 </th>

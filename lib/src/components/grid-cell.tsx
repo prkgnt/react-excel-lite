@@ -1,6 +1,5 @@
 import { cn } from "../utils/cn";
 import type { GridCellProps } from "../types";
-import { formatCurrency } from "../utils/format-utils";
 
 export function GridCell({
   coord,
@@ -34,15 +33,15 @@ export function GridCell({
     <td
       className={cn(
         "relative border border-gray-300 p-0",
-        isSelected && "bg-main/20 ring-2 ring-inset ring-main/60",
-        isFillTarget && "bg-main/10"
+        isSelected && "bg-blue-100 ring-2 ring-inset ring-blue-500",
+        isFillTarget && "bg-blue-50"
       )}
       onMouseDown={handleMouseDownCell}
       onMouseEnter={() => onMouseEnter(coord)}
     >
       <input
         type="text"
-        value={formatCurrency(value)}
+        value={value}
         onChange={handleInputChange}
         className={cn(
           "w-full h-full px-1 py-1 text-right text-xs bg-transparent outline-none cursor-cell",
@@ -52,7 +51,7 @@ export function GridCell({
       {/* Fill handle */}
       {showFillHandle && (
         <div
-          className="fill-handle absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-main cursor-crosshair z-20"
+          className="fill-handle absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-blue-500 cursor-crosshair z-20"
           onMouseDown={handleFillHandleDown}
         />
       )}

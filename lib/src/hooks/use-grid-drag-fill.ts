@@ -3,8 +3,8 @@ import type { CellCoord } from "../types";
 import { getFillTargetCells } from "../utils/grid-utils";
 
 interface UseGridDragFillProps {
-  getValue: (coord: CellCoord) => number;
-  setValues: (updates: { coord: CellCoord; value: number }[]) => void;
+  getValue: (coord: CellCoord) => string;
+  setValues: (updates: { coord: CellCoord; value: string }[]) => void;
 }
 
 interface UseGridDragFillReturn {

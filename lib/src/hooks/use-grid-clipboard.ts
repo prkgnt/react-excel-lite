@@ -4,8 +4,8 @@ import { normalizeRange, parseTSV, toTSV } from "../utils/grid-utils";
 
 interface UseGridClipboardProps {
   selection: SelectionRange;
-  getValue: (coord: CellCoord) => number;
-  setValues: (updates: { coord: CellCoord; value: number }[]) => void;
+  getValue: (coord: CellCoord) => string;
+  setValues: (updates: { coord: CellCoord; value: string }[]) => void;
   rowCount: number;
   colCount: number;
 }
@@ -24,13 +24,13 @@ export function useGridClipboard({
   colCount,
 }: UseGridClipboardProps): UseGridClipboardReturn {
   // Extract selected cell data as 2D array
-  const getSelectedData = useCallback((): number[][] => {
+  const getSelectedData = useCallback((): string[][] => {
     const normalized = normalizeRange(selection);
     if (!normalized.start || !normalized.end) return [];
 
-    const data: number[][] = [];
+    const data: string[][] = [];
     for (let row = normalized.start.row; row <= normalized.end.row; row++) {
-      const rowData: number[] = [];
+      const rowData: string[] = [];
       for (let col = normalized.start.col; col <= normalized.end.col; col++) {
         rowData.push(getValue({ row, col }));
       }
@@ -66,7 +66,7 @@ export function useGridClipboard({
       const startCol = selection.start.col;
 
       // Collect cells to update as array
-      const updates: { coord: CellCoord; value: number }[] = [];
+      const updates: { coord: CellCoord; value: string }[] = [];
 
       // Check paste range (prevent exceeding grid bounds)
       data.forEach((rowData, rowOffset) => {
@@ -90,16 +90,16 @@ export function useGridClipboard({
     }
   }, [selection.start, setValues, rowCount, colCount]);
 
-  // Delete selection (reset to 0)
+  // Delete selection (reset to empty string)
   const handleDelete = useCallback(() => {
     const normalized = normalizeRange(selection);
     if (!normalized.start || !normalized.end) return;
 
-    const updates: { coord: CellCoord; value: number }[] = [];
+    const updates: { coord: CellCoord; value: string }[] = [];
 
     for (let row = normalized.start.row; row <= normalized.end.row; row++) {
       for (let col = normalized.start.col; col <= normalized.end.col; col++) {
-        updates.push({ coord: { row, col }, value: 0 });
+        updates.push({ coord: { row, col }, value: "" });
       }
     }
 

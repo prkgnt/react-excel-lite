@@ -1,5 +1,4 @@
 import type { CellCoord, SelectionRange } from "../types";
-import { formatCurrency, parseCurrency } from "./format-utils";
 
 /**
  * Convert coordinate to string key
@@ -65,25 +64,18 @@ export function isCellInRange(
 /**
  * Parse TSV (Tab-Separated Values) string - supports Excel copy
  */
-export function parseTSV(text: string): number[][] {
+export function parseTSV(text: string): string[][] {
   return text
     .split(/\r?\n/)
     .filter((line) => line.trim())
-    .map((line) =>
-      line.split("\t").map((cell) => {
-        const parsed = parseCurrency(cell.trim());
-        return isNaN(parsed) ? 0 : parsed;
-      })
-    );
+    .map((line) => line.split("\t").map((cell) => cell.trim()));
 }
 
 /**
  * Convert 2D array to TSV string
  */
-export function toTSV(data: number[][]): string {
-  return data
-    .map((row) => row.map((v) => formatCurrency(v)).join("\t"))
-    .join("\n");
+export function toTSV(data: string[][]): string {
+  return data.map((row) => row.join("\t")).join("\n");
 }
 
 /**

@@ -5,17 +5,17 @@ import type { HeaderGroup } from "react-excel-lite";
 function App() {
   // Basic example data
   const [basicData, setBasicData] = useState([
-    [1000, 2000, 3000],
-    [4000, 5000, 6000],
-    [7000, 8000, 9000],
+    ["1000", "2000", "3000"],
+    ["4000", "5000", "6000"],
+    ["7000", "8000", "9000"],
   ]);
 
   // Advanced example data
   const [advancedData, setAdvancedData] = useState([
-    [12500, 15000, 13200, 14800, 11000, 16500],
-    [8900, 9200, 8500, 9800, 7600, 10200],
-    [22000, 24500, 21800, 25000, 20000, 26800],
-    [5600, 6100, 5200, 6800, 4900, 7200],
+    ["12500", "15000", "13200", "14800", "11000", "16500"],
+    ["8900", "9200", "8500", "9800", "7600", "10200"],
+    ["22000", "24500", "21800", "25000", "20000", "26800"],
+    ["5600", "6100", "5200", "6800", "4900", "7200"],
   ]);
 
   const headerGroups: HeaderGroup[] = [
@@ -128,9 +128,9 @@ function App() {
           <div className="mt-4 bg-slate-900 rounded-lg p-4 overflow-x-auto">
             <pre className="text-sm text-slate-300">
               <code>{`const [data, setData] = useState([
-  [1000, 2000, 3000],
-  [4000, 5000, 6000],
-  [7000, 8000, 9000],
+  ["1000", "2000", "3000"],
+  ["4000", "5000", "6000"],
+  ["7000", "8000", "9000"],
 ]);
 
 <ExcelGrid data={data} onChange={setData} />`}</code>

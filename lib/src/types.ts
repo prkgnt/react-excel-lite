@@ -35,10 +35,10 @@ export interface HeaderGroup {
  * Grid Props
  */
 export interface ExcelGridProps {
-  /** 2D number array data */
-  data: number[][];
+  /** 2D string array data */
+  data: string[][];
   /** Data change callback */
-  onChange: (data: number[][]) => void;
+  onChange: (data: string[][]) => void;
   /** Row header labels array */
   rowHeaders?: string[];
   /** Header group definitions */
@@ -54,7 +54,7 @@ export interface ExcelGridProps {
  */
 export interface GridCellProps {
   coord: CellCoord;
-  value: number;
+  value: string;
   isSelected: boolean;
   isFillTarget: boolean;
   showFillHandle: boolean;
