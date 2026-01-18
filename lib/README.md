@@ -43,14 +43,14 @@ function App() {
 
 ## Props
 
-| Prop             | Type                         | Required | Description                 |
-| ---------------- | ---------------------------- | -------- | --------------------------- |
-| `data`           | `number[][]`                 | Yes      | 2D array of numbers         |
-| `onChange`       | `(data: number[][]) => void` | Yes      | Callback when data changes  |
-| `rowHeaders`     | `string[]`                   | No       | Row header labels           |
-| `headerGroups`   | `HeaderGroup[]`              | No       | Grouped column headers      |
-| `className`      | `string`                     | No       | Additional CSS class        |
-| `rowHeaderTitle` | `string`                     | No       | Title for row header column |
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `number[][]` | Yes | 2D array of numbers |
+| `onChange` | `(data: number[][]) => void` | Yes | Callback when data changes |
+| `rowHeaders` | `string[]` | No | Row header labels |
+| `headerGroups` | `HeaderGroup[]` | No | Grouped column headers |
+| `className` | `string` | No | Additional CSS class |
+| `rowHeaderTitle` | `string` | No | Title for row header column |
 
 ## With Headers
 
@@ -105,12 +105,12 @@ const headerGroups: HeaderGroup[] = [
       {
         key: "revenue",
         label: "Revenue",
-        description: "Total revenue including tax",
+        description: "Total revenue including tax"
       },
       {
         key: "cost",
         label: "Cost",
-        description: "Total cost of goods sold",
+        description: "Total cost of goods sold"
       },
     ],
   },
@@ -119,10 +119,10 @@ const headerGroups: HeaderGroup[] = [
 
 ## Keyboard Shortcuts
 
-| Shortcut               | Action                          |
-| ---------------------- | ------------------------------- |
-| `Ctrl+C` / `Cmd+C`     | Copy selected cells             |
-| `Ctrl+V` / `Cmd+V`     | Paste from clipboard            |
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl+C` / `Cmd+C` | Copy selected cells |
+| `Ctrl+V` / `Cmd+V` | Paste from clipboard |
 | `Delete` / `Backspace` | Clear selected cells (set to 0) |
 
 ## Exports
