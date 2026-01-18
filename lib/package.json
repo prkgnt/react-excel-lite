@@ -1,6 +1,6 @@
 {
   "name": "react-excel-lite",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A lightweight, Excel-like editable grid component for React with cell selection, copy/paste, auto-fill with arithmetic sequence detection, and customizable styling.",
   "license": "MIT",
   "type": "module",
