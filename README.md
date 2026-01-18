@@ -56,7 +56,8 @@ function App() {
 
 ```tsx
 import { useState } from "react";
-import { ExcelGrid, HeaderGroup } from "react-excel-lite";
+import { ExcelGrid } from "react-excel-lite";
+import type { HeaderGroup } from "react-excel-lite";
 
 function App() {
   const [data, setData] = useState([
