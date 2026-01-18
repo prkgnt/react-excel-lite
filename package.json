@@ -13,7 +13,7 @@
     "preview": "vite preview",
     "changeset": "changeset",
     "version": "changeset version",
-    "release": "cd lib && npm run build && npm publish --provenance --access public"
+    "release": "cd lib && npm run build && npm publish --access public"
   },
   "dependencies": {
     "react": "^19.2.0",
