@@ -8,7 +8,7 @@ import { useGridDragFill } from "../hooks/use-grid-drag-fill";
 import { normalizeRange } from "../utils/grid-utils";
 import { GridCell } from "./grid-cell";
 
-// Base styles
+// Base layout styles (always applied)
 const containerBaseStyle: CSSProperties = {
   outline: "none",
   overflowX: "auto",
@@ -20,33 +20,44 @@ const tableBaseStyle: CSSProperties = {
   userSelect: "none",
 };
 
-const rowHeaderBaseStyle: CSSProperties = {
+// Layout-only styles for headers (always applied)
+const rowHeaderLayoutStyle: CSSProperties = {
   position: "sticky",
   left: 0,
   zIndex: 10,
-  backgroundColor: "#f3f4f6",
   border: "1px solid #d1d5db",
   padding: "6px 8px",
   textAlign: "center",
   fontWeight: 500,
 };
 
-const colGroupBaseStyle: CSSProperties = {
-  backgroundColor: "#dbeafe",
+const colGroupLayoutStyle: CSSProperties = {
   border: "1px solid #d1d5db",
   padding: "6px 4px",
   textAlign: "center",
   fontWeight: 500,
-  color: "#1d4ed8",
 };
 
-const colHeaderBaseStyle: CSSProperties = {
-  backgroundColor: "#f9fafb",
+const colHeaderLayoutStyle: CSSProperties = {
   border: "1px solid #d1d5db",
   padding: "4px",
   textAlign: "center",
   fontWeight: 500,
   fontSize: "11px",
+};
+
+// Visual styles (only applied when no custom className)
+const rowHeaderVisualStyle: CSSProperties = {
+  backgroundColor: "#f3f4f6",
+};
+
+const colGroupVisualStyle: CSSProperties = {
+  backgroundColor: "#dbeafe",
+  color: "#1d4ed8",
+};
+
+const colHeaderVisualStyle: CSSProperties = {
+  backgroundColor: "#f9fafb",
 };
 
 export function ExcelGrid({
@@ -192,6 +203,22 @@ export function ExcelGrid({
     [selection]
   );
 
+  // Build header styles: layout + visual (only if no custom className)
+  const getRowHeaderStyle = (customClassName?: string): CSSProperties => ({
+    ...rowHeaderLayoutStyle,
+    ...(!customClassName && !styles?.rowHeader ? rowHeaderVisualStyle : {}),
+  });
+
+  const getColGroupStyle = (customClassName?: string): CSSProperties => ({
+    ...colGroupLayoutStyle,
+    ...(!customClassName && !styles?.colGroup ? colGroupVisualStyle : {}),
+  });
+
+  const getColHeaderStyle = (customClassName?: string): CSSProperties => ({
+    ...colHeaderLayoutStyle,
+    ...(!customClassName && !styles?.colHeader ? colHeaderVisualStyle : {}),
+  });
+
   return (
     <div
       ref={containerRef}
@@ -209,7 +236,7 @@ export function ExcelGrid({
               {rowHeaders && (
                 <th
                   className={styles?.rowHeader}
-                  style={rowHeaderBaseStyle}
+                  style={getRowHeaderStyle()}
                 >
                   {rowHeaderTitle}
                 </th>
@@ -220,7 +247,7 @@ export function ExcelGrid({
                   key={groupIndex}
                   colSpan={group.headers.length}
                   className={cn(styles?.colGroup, group.className)}
-                  style={colGroupBaseStyle}
+                  style={getColGroupStyle(group.className)}
                 >
                   {group.label}
                 </th>
@@ -234,7 +261,7 @@ export function ExcelGrid({
               {rowHeaders && (
                 <th
                   className={styles?.rowHeader}
-                  style={rowHeaderBaseStyle}
+                  style={getRowHeaderStyle()}
                 ></th>
               )}
               {/* Individual headers */}
@@ -242,7 +269,7 @@ export function ExcelGrid({
                 <th
                   key={header.key}
                   className={cn(styles?.colHeader, header.className)}
-                  style={colHeaderBaseStyle}
+                  style={getColHeaderStyle(header.className)}
                   title={header.description}
                 >
                   {header.label}
@@ -261,7 +288,7 @@ export function ExcelGrid({
                     styles?.rowHeader,
                     rowHeaders[rowIndex].className
                   )}
-                  style={rowHeaderBaseStyle}
+                  style={getRowHeaderStyle(rowHeaders[rowIndex].className)}
                   title={rowHeaders[rowIndex].description}
                 >
                   {rowHeaders[rowIndex].label}
