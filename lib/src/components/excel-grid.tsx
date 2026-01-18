@@ -4,6 +4,7 @@ import type { ExcelGridProps, CellCoord } from "../types";
 import { useGridSelection } from "../hooks/use-grid-selection";
 import { useGridClipboard } from "../hooks/use-grid-clipboard";
 import { useGridDragFill } from "../hooks/use-grid-drag-fill";
+import { normalizeRange } from "../utils/grid-utils";
 import { GridCell } from "./grid-cell";
 
 export function ExcelGrid({
@@ -105,6 +106,7 @@ export function ExcelGrid({
     handleFillHandleMouseDown,
     handleCellMouseEnterForFill,
   } = useGridDragFill({
+    selection,
     getValue,
     setValues,
   });
@@ -134,12 +136,15 @@ export function ExcelGrid({
     [setValue]
   );
 
-  // Check if current cell is the last selected cell (for fill handle display)
-  const isLastSelectedCell = useCallback(
+  // Check if current cell is the bottom-right of selection (for fill handle display)
+  const isBottomRightCell = useCallback(
     (coord: CellCoord): boolean => {
       if (!selection.start) return false;
-      const end = selection.end || selection.start;
-      return coord.row === end.row && coord.col === end.col;
+      const normalized = normalizeRange(selection);
+      if (!normalized.start || !normalized.end) return false;
+      return (
+        coord.row === normalized.end.row && coord.col === normalized.end.col
+      );
     },
     [selection]
   );
@@ -208,7 +213,7 @@ export function ExcelGrid({
                 const coord = { row: rowIndex, col: colIndex };
                 const isSelected = isCellSelected(coord);
                 const isFill = isFillTarget(coord);
-                const isLast = isLastSelectedCell(coord);
+                const isBottomRight = isBottomRightCell(coord);
 
                 return (
                   <GridCell
@@ -217,7 +222,7 @@ export function ExcelGrid({
                     value={getValue(coord)}
                     isSelected={isSelected}
                     isFillTarget={isFill}
-                    showFillHandle={isLast && !isDraggingFill}
+                    showFillHandle={isBottomRight && !isDraggingFill}
                     onMouseDown={handleCellMouseDown}
                     onMouseEnter={handleCellEnter}
                     onChange={handleCellChange}
