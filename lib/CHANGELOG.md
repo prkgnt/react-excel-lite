@@ -1,5 +1,11 @@
 # react-excel-lite
 
+## 0.0.7
+
+### Patch Changes
+
+- e66d444: customize col and row styles
+
 ## 0.0.6
 
 ### Patch Changes
