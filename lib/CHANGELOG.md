@@ -1,5 +1,11 @@
 # react-excel-lite
 
+## 0.0.6
+
+### Patch Changes
+
+- 90410b0: Customize Styles
+
 ## 0.0.5
 
 ### Patch Changes
