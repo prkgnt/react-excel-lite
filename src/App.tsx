@@ -167,7 +167,7 @@ function App() {
                 <span className="text-emerald-400">-lite</span>
               </h1>
               <p className="text-slate-400 text-lg max-w-md">
-                Excel-like grid for React. Lightweight. Zero dependencies.
+                Excel-like grid for React. Lightweight.
               </p>
             </div>
             <div className="flex gap-3">
@@ -210,25 +210,63 @@ function App() {
       </header>
 
       <main className="max-w-6xl mx-auto px-6 py-16 space-y-20">
-        {/* Features */}
-        <section className="text-center text-slate-500">
-          <span>Selection</span>
-          <span className="mx-2 text-slate-300">·</span>
-          <span>Copy/Paste</span>
-          <span className="mx-2 text-slate-300">·</span>
-          <span>Auto Fill</span>
-          <span className="mx-2 text-slate-300">·</span>
-          <span>Headers | Row Labels</span>
-        </section>
-
         {/* Installation */}
         <section>
           <h2 className="text-xl font-semibold text-slate-900 mb-4">
             Installation
           </h2>
-          <div className="bg-slate-900 rounded-lg p-4">
+          <div className="bg-slate-900 rounded-lg p-4 mb-4">
             <pre className="text-sm text-slate-300">
               <code>npm install react-excel-lite</code>
+            </pre>
+          </div>
+
+          {/* Requirements */}
+          <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+            <table className="w-full text-sm">
+              <thead className="bg-slate-50 border-b border-slate-200">
+                <tr>
+                  <th className="px-4 py-2 text-left font-medium text-slate-900">
+                    Peer Dependency
+                  </th>
+                  <th className="px-4 py-2 text-left font-medium text-slate-900">
+                    Version
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-200">
+                <tr>
+                  <td className="px-4 py-2 text-slate-700">React</td>
+                  <td className="px-4 py-2">
+                    <code className="text-xs bg-slate-100 px-1.5 py-0.5 rounded">
+                      {">"}= 18.0.0
+                    </code>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-2 text-slate-700">Tailwind CSS</td>
+                  <td className="px-4 py-2">
+                    <code className="text-xs bg-slate-100 px-1.5 py-0.5 rounded">
+                      {">"}= 3.0.0
+                    </code>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p className="mt-4 text-sm text-slate-500">
+            Add the library to your{" "}
+            <code className="bg-slate-100 px-1.5 py-0.5 rounded text-xs">
+              tailwind.config.js
+            </code>{" "}
+            content paths:
+          </p>
+          <div className="mt-2 bg-slate-900 rounded-lg p-4">
+            <pre className="text-sm text-slate-300">
+              <code>{`content: [
+  "./node_modules/react-excel-lite/**/*.{js,ts,jsx,tsx}",
+]`}</code>
             </pre>
           </div>
         </section>
@@ -419,7 +457,9 @@ const rowHeaders: RowHeaderGroup[] = [
             Custom Styling
           </h2>
           <p className="text-slate-500 mb-6">
-            Use the <code className="bg-slate-100 px-1.5 py-0.5 rounded">styles</code> prop to customize selection, fill target, fill handle, and headers.
+            Use the{" "}
+            <code className="bg-slate-100 px-1.5 py-0.5 rounded">styles</code>{" "}
+            prop to customize selection, fill target, fill handle, and headers.
           </p>
 
           {/* GridStyles Reference */}
@@ -445,7 +485,8 @@ const rowHeaders: RowHeaderGroup[] = [
             Color Themes
           </h3>
           <p className="text-slate-500 mb-4">
-            Click cells to see selection styles. Drag the handle at the bottom-right corner to see fill styles.
+            Click cells to see selection styles. Drag the handle at the
+            bottom-right corner to see fill styles.
           </p>
 
           <div className="grid md:grid-cols-3 gap-6 mb-6">
@@ -453,7 +494,9 @@ const rowHeaders: RowHeaderGroup[] = [
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-3 h-3 rounded-full bg-purple-500" />
-                <span className="text-sm font-medium text-slate-700">Purple</span>
+                <span className="text-sm font-medium text-slate-700">
+                  Purple
+                </span>
               </div>
               <div className="bg-white rounded-lg border border-slate-200 p-4">
                 <ExcelGrid
@@ -468,7 +511,9 @@ const rowHeaders: RowHeaderGroup[] = [
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-3 h-3 rounded-full bg-emerald-500" />
-                <span className="text-sm font-medium text-slate-700">Green</span>
+                <span className="text-sm font-medium text-slate-700">
+                  Green
+                </span>
               </div>
               <div className="bg-white rounded-lg border border-slate-200 p-4">
                 <ExcelGrid
@@ -483,7 +528,9 @@ const rowHeaders: RowHeaderGroup[] = [
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-3 h-3 rounded-full bg-orange-500" />
-                <span className="text-sm font-medium text-slate-700">Orange</span>
+                <span className="text-sm font-medium text-slate-700">
+                  Orange
+                </span>
               </div>
               <div className="bg-white rounded-lg border border-slate-200 p-4">
                 <ExcelGrid
@@ -522,7 +569,11 @@ const orangeTheme: GridStyles = {
             Header Styling
           </h3>
           <p className="text-slate-500 mb-4">
-            Use <code className="bg-slate-100 px-1.5 py-0.5 rounded">className</code> on individual headers/groups for fine-grained control.
+            Use{" "}
+            <code className="bg-slate-100 px-1.5 py-0.5 rounded">
+              className
+            </code>{" "}
+            on individual headers/groups for fine-grained control.
           </p>
           <div className="bg-white rounded-lg border border-slate-200 p-6 overflow-x-auto">
             <ExcelGrid

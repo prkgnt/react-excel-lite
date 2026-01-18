@@ -12,9 +12,9 @@ A lightweight, Excel-like editable grid component for React.
 
 - Excel-like cell selection (click & drag)
 - Copy/Paste support (Ctrl+C / Ctrl+V)
-- Fill handle drag (auto-fill cells)
-- Grouped column headers
-- Row headers
+- Auto Fill with arithmetic sequence detection (drag fill handle)
+- Grouped column headers with custom styling
+- Row headers with custom styling
 - Keyboard shortcuts (Delete/Backspace to clear)
 - Zero external dependencies
 
@@ -32,9 +32,9 @@ import { ExcelGrid } from "react-excel-lite";
 
 function App() {
   const [data, setData] = useState([
-    [100, 200, 300],
-    [400, 500, 600],
-    [700, 800, 900],
+    ["100", "200", "300"],
+    ["400", "500", "600"],
+    ["700", "800", "900"],
   ]);
 
   return <ExcelGrid data={data} onChange={setData} />;
@@ -43,29 +43,30 @@ function App() {
 
 ## Props
 
-| Prop | Type | Required | Description |
-|------|------|----------|-------------|
-| `data` | `number[][]` | Yes | 2D array of numbers |
-| `onChange` | `(data: number[][]) => void` | Yes | Callback when data changes |
-| `rowHeaders` | `string[]` | No | Row header labels |
-| `headerGroups` | `HeaderGroup[]` | No | Grouped column headers |
-| `className` | `string` | No | Additional CSS class |
-| `rowHeaderTitle` | `string` | No | Title for row header column |
+| Prop             | Type                         | Required | Description                 |
+| ---------------- | ---------------------------- | -------- | --------------------------- |
+| `data`           | `string[][]`                 | Yes      | 2D array of strings         |
+| `onChange`       | `(data: string[][]) => void` | Yes      | Callback when data changes  |
+| `rowHeaders`     | `RowHeaderGroup[]`           | No       | Row header definitions      |
+| `colHeaders`     | `ColHeaderGroup[]`           | No       | Grouped column headers      |
+| `className`      | `string`                     | No       | CSS class for container     |
+| `rowHeaderTitle` | `string`                     | No       | Title for row header column |
+| `styles`         | `GridStyles`                 | No       | Style configuration object  |
 
 ## With Headers
 
 ```tsx
 import { useState } from "react";
 import { ExcelGrid } from "react-excel-lite";
-import type { HeaderGroup } from "react-excel-lite";
+import type { ColHeaderGroup, RowHeaderGroup } from "react-excel-lite";
 
 function App() {
   const [data, setData] = useState([
-    [100, 200, 300, 400],
-    [500, 600, 700, 800],
+    ["100", "200", "300", "400"],
+    ["500", "600", "700", "800"],
   ]);
 
-  const headerGroups: HeaderGroup[] = [
+  const colHeaders: ColHeaderGroup[] = [
     {
       label: "Q1",
       headers: [
@@ -82,13 +83,16 @@ function App() {
     },
   ];
 
-  const rowHeaders = ["Product A", "Product B"];
+  const rowHeaders: RowHeaderGroup[] = [
+    { key: "prodA", label: "Product A", description: "Main product line" },
+    { key: "prodB", label: "Product B", description: "Secondary product" },
+  ];
 
   return (
     <ExcelGrid
       data={data}
       onChange={setData}
-      headerGroups={headerGroups}
+      colHeaders={colHeaders}
       rowHeaders={rowHeaders}
       rowHeaderTitle="Product"
     />
@@ -96,35 +100,69 @@ function App() {
 }
 ```
 
-## Header with Description (Tooltip)
+## Custom Styling
+
+Use the `styles` prop to customize selection, fill handle, and header styles:
 
 ```tsx
-const headerGroups: HeaderGroup[] = [
+import type { GridStyles } from "react-excel-lite";
+
+const styles: GridStyles = {
+  cell: "text-sm",
+  selected: "bg-purple-100 ring-2 ring-inset ring-purple-500",
+  fillTarget: "bg-purple-50",
+  fillHandle: "bg-purple-500",
+  colGroup: "bg-purple-100 text-purple-700",
+  colHeader: "bg-purple-50",
+  rowHeader: "bg-slate-200",
+};
+
+<ExcelGrid data={data} onChange={setData} styles={styles} />;
+```
+
+Style individual column headers and groups:
+
+```tsx
+const colHeaders: ColHeaderGroup[] = [
   {
-    label: "Sales",
+    label: "Revenue",
+    className: "bg-green-100 text-green-700",
     headers: [
-      {
-        key: "revenue",
-        label: "Revenue",
-        description: "Total revenue including tax"
-      },
-      {
-        key: "cost",
-        label: "Cost",
-        description: "Total cost of goods sold"
-      },
+      { key: "q1r", label: "Q1", className: "bg-green-50" },
+      { key: "q2r", label: "Q2", className: "bg-green-50" },
     ],
   },
 ];
 ```
 
+Style individual row headers:
+
+```tsx
+const rowHeaders: RowHeaderGroup[] = [
+  {
+    key: "regionA",
+    label: "Region A",
+    className: "bg-slate-700 text-white",
+  },
+];
+```
+
+## Auto Fill (Arithmetic Sequence)
+
+Select cells with a numeric pattern and drag the fill handle to auto-fill:
+
+- `1, 2, 3` → drag down → `4, 5, 6, 7, ...`
+- `100, 200, 300` → drag down → `400, 500, 600, ...`
+- `10, 8, 6` → drag down → `4, 2, 0, -2, ...`
+- Text values → repeats the pattern
+
 ## Keyboard Shortcuts
 
-| Shortcut | Action |
-|----------|--------|
-| `Ctrl+C` / `Cmd+C` | Copy selected cells |
-| `Ctrl+V` / `Cmd+V` | Paste from clipboard |
-| `Delete` / `Backspace` | Clear selected cells (set to 0) |
+| Shortcut               | Action               |
+| ---------------------- | -------------------- |
+| `Ctrl+C` / `Cmd+C`     | Copy selected cells  |
+| `Ctrl+V` / `Cmd+V`     | Paste from clipboard |
+| `Delete` / `Backspace` | Clear selected cells |
 
 ## Exports
 
@@ -142,8 +180,6 @@ const headerGroups: HeaderGroup[] = [
 ### Utilities
 
 - `cn` - Classname merge utility
-- `formatCurrency` - Format number with thousand separators
-- `parseCurrency` - Parse formatted string to number
 - `coordToKey` - Convert coordinate to string key
 - `keyToCoord` - Convert string key to coordinate
 - `getCellsInRange` - Get all cells in a range
@@ -166,27 +202,47 @@ interface SelectionRange {
   end: CellCoord | null;
 }
 
-interface HeaderDefinition {
+interface ColHeader {
   key: string;
   label: string;
   description?: string;
+  className?: string;
 }
 
-interface HeaderGroup {
+interface ColHeaderGroup {
   label: string;
-  headers: HeaderDefinition[];
+  headers: ColHeader[];
+  className?: string;
+}
+
+interface RowHeaderGroup {
+  key: string;
+  label: string;
+  description?: string;
+  className?: string;
+}
+
+interface GridStyles {
+  cell?: string;
+  selected?: string;
+  fillTarget?: string;
+  fillHandle?: string;
+  colGroup?: string;
+  colHeader?: string;
+  rowHeader?: string;
 }
 
 interface ExcelGridProps {
-  data: number[][];
-  onChange: (data: number[][]) => void;
-  rowHeaders?: string[];
-  headerGroups?: HeaderGroup[];
+  data: string[][];
+  onChange: (data: string[][]) => void;
+  rowHeaders?: RowHeaderGroup[];
+  colHeaders?: ColHeaderGroup[];
   className?: string;
   rowHeaderTitle?: string;
+  styles?: GridStyles;
 }
 ```
 
 ## Styling
 
-The component uses Tailwind CSS classes. Make sure Tailwind CSS is configured in your project, or override styles using the `className` prop.
+The component uses Tailwind CSS classes. Make sure Tailwind CSS is configured in your project, or override styles using the `styles` prop.

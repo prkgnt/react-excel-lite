@@ -16,13 +16,21 @@ A lightweight, Excel-like editable grid component for React.
 - Grouped column headers with custom styling
 - Row headers with custom styling
 - Keyboard shortcuts (Delete/Backspace to clear)
-- Zero external dependencies
+
+## Requirements
+
+| Dependency   | Version   |
+| ------------ | --------- |
+| React        | >= 18.0.0 |
+| Tailwind CSS | >= 3.0.0  |
 
 ## Installation
 
 ```bash
 npm install react-excel-lite
 ```
+
+> **Note:** This component uses Tailwind CSS classes for styling. Make sure Tailwind CSS is configured in your project.
 
 ## Quick Start
 
@@ -245,4 +253,23 @@ interface ExcelGridProps {
 
 ## Styling
 
-The component uses Tailwind CSS classes. Make sure Tailwind CSS is configured in your project, or override styles using the `styles` prop.
+This component uses [Tailwind CSS](https://tailwindcss.com/) classes for styling.
+
+### Tailwind CSS Setup
+
+Make sure to include the library in your Tailwind content configuration:
+
+```js
+// tailwind.config.js
+module.exports = {
+  content: [
+    // ... your other content paths
+    "./node_modules/react-excel-lite/**/*.{js,ts,jsx,tsx}",
+  ],
+  // ...
+};
+```
+
+### Custom Styles
+
+Use the `styles` prop to override default styles with your own Tailwind classes.
