@@ -3,6 +3,7 @@ import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import dts from "vite-plugin-dts";
+import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -14,6 +15,7 @@ export default defineConfig({
       tsconfigPath: "./tsconfig.json",
       include: ["src"],
     }),
+    cssInjectedByJsPlugin(),
   ],
   build: {
     lib: {
@@ -22,13 +24,12 @@ export default defineConfig({
       fileName: "react-excel-lite",
     },
     rollupOptions: {
-      external: ["react", "react-dom", "react/jsx-runtime", "tailwindcss"],
+      external: ["react", "react-dom", "react/jsx-runtime"],
       output: {
         globals: {
           react: "React",
           "react-dom": "ReactDOM",
           "react/jsx-runtime": "ReactJsxRuntime",
-          tailwindcss: "tailwindcss",
         },
       },
     },
