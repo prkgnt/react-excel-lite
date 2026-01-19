@@ -43,6 +43,7 @@ function App() {
   const colHeaders: ColHeaderGroup[] = [
     {
       label: "Q1 2025",
+      description: "First quarter 2025",
       headers: [
         { key: "jan", label: "Jan", description: "January sales data" },
         { key: "feb", label: "Feb", description: "February sales data" },
@@ -51,6 +52,7 @@ function App() {
     },
     {
       label: "Q2 2025",
+      description: "Second quarter 2025",
       headers: [
         { key: "apr", label: "Apr", description: "April sales data" },
         { key: "may", label: "May", description: "May sales data" },
@@ -60,10 +62,16 @@ function App() {
   ];
 
   const rowHeaders: RowHeaderGroup[] = [
-    { key: "prodA", label: "Product A", description: "Main product line" },
-    { key: "prodB", label: "Product B", description: "Secondary product" },
-    { key: "prodC", label: "Product C", description: "Budget line" },
-    { key: "prodD", label: "Product D", description: "Premium line" },
+    {
+      label: "Products",
+      description: "Product categories",
+      headers: [
+        { key: "prodA", label: "Product A", description: "Main product line" },
+        { key: "prodB", label: "Product B", description: "Secondary product" },
+        { key: "prodC", label: "Product C", description: "Budget line" },
+        { key: "prodD", label: "Product D", description: "Premium line" },
+      ],
+    },
   ];
 
   // Custom styling example data
@@ -94,22 +102,28 @@ function App() {
 
   const styledRowHeaders: RowHeaderGroup[] = [
     {
-      key: "regionA",
-      label: "Region A",
-      description: "North America",
-      className: "bg-slate-700 text-white",
-    },
-    {
-      key: "regionB",
-      label: "Region B",
-      description: "Europe",
-      className: "bg-slate-600 text-white",
-    },
-    {
-      key: "regionC",
-      label: "Region C",
-      description: "Asia Pacific",
-      className: "bg-slate-500 text-white",
+      label: "Regions",
+      description: "Sales regions",
+      headers: [
+        {
+          key: "regionA",
+          label: "Region A",
+          description: "North America",
+          className: "bg-slate-700 text-white",
+        },
+        {
+          key: "regionB",
+          label: "Region B",
+          description: "Europe",
+          className: "bg-slate-600 text-white",
+        },
+        {
+          key: "regionC",
+          label: "Region C",
+          description: "Asia Pacific",
+          className: "bg-slate-500 text-white",
+        },
+      ],
     },
   ];
 
@@ -420,9 +434,13 @@ function App() {
 ];
 
 const rowHeaders: RowHeaderGroup[] = [
-  { key: "prodA", label: "Product A", description: "Main product" },
-  { key: "prodB", label: "Product B", description: "Secondary" },
-  // ...
+  {
+    label: "Products",
+    headers: [
+      { key: "prodA", label: "Product A", description: "Main product" },
+      { key: "prodB", label: "Product B", description: "Secondary" },
+    ],
+  },
 ];
 
 <ExcelGrid
@@ -596,9 +614,14 @@ const plainTheme: GridStyles = {
 ];
 
 const rowHeaders: RowHeaderGroup[] = [
-  { key: "regionA", label: "Region A", className: "bg-slate-700 text-white" },
-  { key: "regionB", label: "Region B", className: "bg-slate-600 text-white" },
-  { key: "regionC", label: "Region C", className: "bg-slate-500 text-white" },
+  {
+    label: "Regions",
+    headers: [
+      { key: "regionA", label: "Region A", className: "bg-slate-700 text-white" },
+      { key: "regionB", label: "Region B", className: "bg-slate-600 text-white" },
+      { key: "regionC", label: "Region C", className: "bg-slate-500 text-white" },
+    ],
+  },
 ];`}</code>
             </pre>
           </div>

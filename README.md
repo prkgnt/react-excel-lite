@@ -11,10 +11,13 @@ A lightweight, Excel-like editable grid component for React.
 ## Features
 
 - Excel-like cell selection (click & drag)
+- Keyboard navigation (Arrow keys to move, Shift+Arrow to extend selection)
 - Copy/Paste support (Ctrl+C / Ctrl+V)
 - Auto Fill with arithmetic sequence detection (drag fill handle)
-- Grouped column headers with custom styling
-- Row headers with custom styling
+- Grouped column headers with rowSpan support
+- Grouped row headers with rowSpan support
+- Click outside to clear selection
+- Double-click or type to edit cells
 - Keyboard shortcuts (Delete/Backspace to clear)
 - **Styling-agnostic**: Works with Tailwind CSS, CSS Modules, plain CSS, or any styling solution
 - Zero external dependencies
@@ -57,7 +60,7 @@ npm run dev
 | ---------------- | ---------------------------- | -------- | --------------------------- |
 | `data`           | `string[][]`                 | Yes      | 2D array of strings         |
 | `onChange`       | `(data: string[][]) => void` | Yes      | Callback when data changes  |
-| `rowHeaders`     | `RowHeaderGroup[]`           | No       | Row header definitions      |
+| `rowHeaders`     | `RowHeaderGroup[]`           | No       | Grouped row headers         |
 | `colHeaders`     | `ColHeaderGroup[]`           | No       | Grouped column headers      |
 | `className`      | `string`                     | No       | CSS class for container     |
 | `rowHeaderTitle` | `string`                     | No       | Title for row header column |
@@ -79,23 +82,31 @@ function App() {
   const colHeaders: ColHeaderGroup[] = [
     {
       label: "Q1",
+      description: "First quarter",
       headers: [
-        { key: "jan", label: "Jan" },
-        { key: "feb", label: "Feb" },
+        { key: "jan", label: "Jan", description: "January" },
+        { key: "feb", label: "Feb", description: "February" },
       ],
     },
     {
       label: "Q2",
+      description: "Second quarter",
       headers: [
-        { key: "mar", label: "Mar" },
-        { key: "apr", label: "Apr" },
+        { key: "mar", label: "Mar", description: "March" },
+        { key: "apr", label: "Apr", description: "April" },
       ],
     },
   ];
 
   const rowHeaders: RowHeaderGroup[] = [
-    { key: "prodA", label: "Product A", description: "Main product line" },
-    { key: "prodB", label: "Product B", description: "Secondary product" },
+    {
+      label: "Products",
+      description: "Product categories",
+      headers: [
+        { key: "prodA", label: "Product A", description: "Main product line" },
+        { key: "prodB", label: "Product B", description: "Secondary product" },
+      ],
+    },
   ];
 
   return (
@@ -104,7 +115,7 @@ function App() {
       onChange={setData}
       colHeaders={colHeaders}
       rowHeaders={rowHeaders}
-      rowHeaderTitle="Product"
+      rowHeaderTitle="Category"
     />
   );
 }
@@ -219,9 +230,12 @@ Style individual row headers:
 ```tsx
 const rowHeaders: RowHeaderGroup[] = [
   {
-    key: "regionA",
-    label: "Region A",
+    label: "Regions",
     className: "bg-slate-700 text-white",
+    headers: [
+      { key: "regionA", label: "Region A", className: "bg-slate-600 text-white" },
+      { key: "regionB", label: "Region B", className: "bg-slate-500 text-white" },
+    ],
   },
 ];
 ```
@@ -237,11 +251,16 @@ Select cells with a numeric pattern and drag the fill handle to auto-fill:
 
 ## Keyboard Shortcuts
 
-| Shortcut               | Action               |
-| ---------------------- | -------------------- |
-| `Ctrl+C` / `Cmd+C`     | Copy selected cells  |
-| `Ctrl+V` / `Cmd+V`     | Paste from clipboard |
-| `Delete` / `Backspace` | Clear selected cells |
+| Shortcut               | Action                              |
+| ---------------------- | ----------------------------------- |
+| `Arrow Keys`           | Move selection                      |
+| `Shift + Arrow Keys`   | Extend selection range              |
+| `Enter`                | Enter edit mode (select all text)   |
+| `Any character`        | Enter edit mode and start typing    |
+| `Escape`               | Exit edit mode                      |
+| `Ctrl+C` / `Cmd+C`     | Copy selected cells                 |
+| `Ctrl+V` / `Cmd+V`     | Paste from clipboard                |
+| `Delete` / `Backspace` | Clear selected cells                |
 
 ## Exports
 
@@ -253,7 +272,7 @@ Select cells with a numeric pattern and drag the fill handle to auto-fill:
 ### Hooks
 
 - `useGridSelection` - Cell selection logic
-- `useGridClipboard` - Copy/paste logic
+- `useGridClipboard` - Copy/paste and keyboard navigation logic
 - `useGridDragFill` - Fill handle logic
 
 ### Utilities
@@ -291,12 +310,20 @@ interface ColHeader {
 interface ColHeaderGroup {
   label: string;
   headers: ColHeader[];
+  description?: string;
+  className?: string;
+}
+
+interface RowHeader {
+  key: string;
+  label: string;
+  description?: string;
   className?: string;
 }
 
 interface RowHeaderGroup {
-  key: string;
   label: string;
+  headers: RowHeader[];
   description?: string;
   className?: string;
 }

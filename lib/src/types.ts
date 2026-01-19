@@ -31,7 +31,19 @@ export interface ColHeader {
 export interface ColHeaderGroup {
   label: string;
   headers: ColHeader[];
+  description?: string;
   /** Custom class name for this group header */
+  className?: string;
+}
+
+/**
+ * Row header definition
+ */
+export interface RowHeader {
+  key: string;
+  label: string;
+  description?: string;
+  /** Custom class name for this header cell */
   className?: string;
 }
 
@@ -39,10 +51,10 @@ export interface ColHeaderGroup {
  * Row header group
  */
 export interface RowHeaderGroup {
-  key: string;
   label: string;
+  headers: RowHeader[];
   description?: string;
-  /** Custom class name for this row header */
+  /** Custom class name for this group header */
   className?: string;
 }
 
@@ -75,7 +87,7 @@ export interface ExcelGridProps {
   data: string[][];
   /** Data change callback */
   onChange: (data: string[][]) => void;
-  /** Row header definitions (overridable per row) */
+  /** Row header group definitions */
   rowHeaders?: RowHeaderGroup[];
   /** Column header group definitions */
   colHeaders?: ColHeaderGroup[];

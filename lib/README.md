@@ -27,7 +27,7 @@ npm install react-excel-lite
 
 ## Quick Start
 
-```tsx
+````tsx
 import { useState } from "react";
 import { ExcelGrid } from "react-excel-lite";
 
@@ -40,7 +40,6 @@ function App() {
 
   return <ExcelGrid data={data} onChange={setData} />;
 }
-```
 
 ## Props
 
@@ -99,7 +98,7 @@ function App() {
     />
   );
 }
-```
+````
 
 ## Styling
 
@@ -108,6 +107,7 @@ The component comes with sensible default styles built-in. You can customize sty
 ### Default Styles
 
 Out of the box, the grid has:
+
 - Light gray borders and headers
 - Blue selection highlight
 - Blue fill handle
@@ -178,13 +178,13 @@ const styles: GridStyles = {
 
 ```ts
 interface GridStyles {
-  cell?: string;       // CSS class for data cells
-  selected?: string;   // CSS class for selected cells (overrides default)
+  cell?: string; // CSS class for data cells
+  selected?: string; // CSS class for selected cells (overrides default)
   fillTarget?: string; // CSS class for fill target cells (overrides default)
   fillHandle?: string; // CSS class for fill handle (overrides default)
-  colGroup?: string;   // CSS class for column group headers
-  colHeader?: string;  // CSS class for individual column headers
-  rowHeader?: string;  // CSS class for row headers
+  colGroup?: string; // CSS class for column group headers
+  colHeader?: string; // CSS class for individual column headers
+  rowHeader?: string; // CSS class for row headers
 }
 ```
 
@@ -312,3 +312,20 @@ interface ExcelGridProps {
   styles?: GridStyles;
 }
 ```
+
+## Development
+
+```bash
+# Install dependencies
+npm install
+
+# Run demo
+npm run dev
+
+# Build library
+cd lib && npm run build
+```
+
+## License
+
+MIT License © 2025 prkgnt
