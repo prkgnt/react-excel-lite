@@ -1,6 +1,10 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, type RefObject } from "react";
 import type { CellCoord, SelectionRange } from "../types";
 import { isCellInRange } from "../utils/grid-utils";
+
+interface UseGridSelectionProps {
+  containerRef: RefObject<HTMLDivElement | null>;
+}
 
 interface UseGridSelectionReturn {
   selection: SelectionRange;
@@ -13,7 +17,9 @@ interface UseGridSelectionReturn {
   setSelection: (range: SelectionRange) => void;
 }
 
-export function useGridSelection(): UseGridSelectionReturn {
+export function useGridSelection({
+  containerRef,
+}: UseGridSelectionProps): UseGridSelectionReturn {
   const [selection, setSelection] = useState<SelectionRange>({
     start: null,
     end: null,
@@ -64,6 +70,21 @@ export function useGridSelection(): UseGridSelectionReturn {
     window.addEventListener("mouseup", handleGlobalMouseUp);
     return () => window.removeEventListener("mouseup", handleGlobalMouseUp);
   }, [isSelecting]);
+
+  // Click outside detection - clear selection when clicking outside container
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        clearSelection();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [containerRef, clearSelection]);
 
   return {
     selection,

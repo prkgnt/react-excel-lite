@@ -6,6 +6,7 @@ interface UseGridClipboardProps {
   selection: SelectionRange;
   getValue: (coord: CellCoord) => string;
   setValues: (updates: { coord: CellCoord; value: string }[]) => void;
+  setSelection: (range: SelectionRange) => void;
   rowCount: number;
   colCount: number;
 }
@@ -20,6 +21,7 @@ export function useGridClipboard({
   selection,
   getValue,
   setValues,
+  setSelection,
   rowCount,
   colCount,
 }: UseGridClipboardProps): UseGridClipboardReturn {
@@ -111,6 +113,38 @@ export function useGridClipboard({
   // Keyboard event handler
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
+      // Skip if editing in input (not readOnly)
+      if (e.target instanceof HTMLInputElement && !e.target.readOnly) return;
+
+      // Arrow key navigation
+      if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+        e.preventDefault();
+        const normalized = normalizeRange(selection);
+        const current = normalized.start ?? { row: 0, col: 0 };
+        let newRow = current.row;
+        let newCol = current.col;
+
+        switch (e.key) {
+          case "ArrowUp":
+            newRow = Math.max(0, current.row - 1);
+            break;
+          case "ArrowDown":
+            newRow = Math.min(rowCount - 1, current.row + 1);
+            break;
+          case "ArrowLeft":
+            newCol = Math.max(0, current.col - 1);
+            break;
+          case "ArrowRight":
+            newCol = Math.min(colCount - 1, current.col + 1);
+            break;
+        }
+        setSelection({
+          start: { row: newRow, col: newCol },
+          end: { row: newRow, col: newCol },
+        });
+        return;
+      }
+
       // Ctrl+C / Cmd+C
       if ((e.ctrlKey || e.metaKey) && e.key === "c") {
         e.preventDefault();
@@ -129,7 +163,15 @@ export function useGridClipboard({
         handleDelete();
       }
     },
-    [handleCopy, handlePaste, handleDelete]
+    [
+      handleCopy,
+      handlePaste,
+      handleDelete,
+      selection,
+      setSelection,
+      rowCount,
+      colCount,
+    ],
   );
 
   return {

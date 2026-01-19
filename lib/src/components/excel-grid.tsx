@@ -60,6 +60,17 @@ const colHeaderVisualStyle: CSSProperties = {
   backgroundColor: "#f9fafb",
 };
 
+// Type for flattened row header info
+interface FlatRowHeaderInfo {
+  groupIndex: number;
+  isFirstInGroup: boolean;
+  groupLabel: string;
+  groupRowCount: number;
+  rowHeader: { key: string; label: string; description?: string; className?: string };
+  groupClassName?: string;
+  groupDescription?: string;
+}
+
 export function ExcelGrid({
   data,
   onChange,
@@ -88,6 +99,26 @@ export function ExcelGrid({
     if (!colHeaders) return [];
     return colHeaders.flatMap((group) => group.headers);
   }, [colHeaders]);
+
+  // Flatten row header groups for rowSpan rendering
+  const flatRowHeaders = useMemo((): FlatRowHeaderInfo[] | null => {
+    if (!rowHeaders) return null;
+    const result: FlatRowHeaderInfo[] = [];
+    rowHeaders.forEach((group, groupIndex) => {
+      group.headers.forEach((header, headerIndex) => {
+        result.push({
+          groupIndex,
+          isFirstInGroup: headerIndex === 0,
+          groupLabel: group.label,
+          groupRowCount: group.headers.length,
+          rowHeader: header,
+          groupClassName: group.className,
+          groupDescription: group.description,
+        });
+      });
+    });
+    return result;
+  }, [rowHeaders]);
 
   // Get value from grid coordinate
   const getValue = useCallback(
@@ -144,12 +175,14 @@ export function ExcelGrid({
     isCellSelected,
     handleCellMouseDown,
     handleCellMouseEnter,
-  } = useGridSelection();
+    setSelection,
+  } = useGridSelection({ containerRef });
 
   const { handleKeyDown } = useGridClipboard({
     selection,
     getValue,
     setValues,
+    setSelection,
     rowCount,
     colCount,
   });
@@ -232,9 +265,10 @@ export function ExcelGrid({
           {/* Group header row */}
           {colHeaders && (
             <tr>
-              {/* Row header column */}
+              {/* Row header column(s) */}
               {rowHeaders && (
                 <th
+                  colSpan={2}
                   className={styles?.rowHeader}
                   style={getRowHeaderStyle()}
                 >
@@ -248,6 +282,7 @@ export function ExcelGrid({
                   colSpan={group.headers.length}
                   className={cn(styles?.colGroup, group.className)}
                   style={getColGroupStyle(group.className)}
+                  title={group.description}
                 >
                   {group.label}
                 </th>
@@ -257,9 +292,10 @@ export function ExcelGrid({
           {/* Individual header row */}
           {colHeaders && (
             <tr>
-              {/* Empty cell */}
+              {/* Empty cell(s) for row headers */}
               {rowHeaders && (
                 <th
+                  colSpan={2}
                   className={styles?.rowHeader}
                   style={getRowHeaderStyle()}
                 ></th>
@@ -279,20 +315,31 @@ export function ExcelGrid({
           )}
         </thead>
         <tbody>
-          {data.map((row, rowIndex) => (
+          {data.map((row, rowIndex) => {
+            const rowHeaderInfo = flatRowHeaders?.[rowIndex];
+            return (
             <tr key={rowIndex}>
-              {/* Row header */}
-              {rowHeaders && rowHeaders[rowIndex] && (
-                <td
-                  className={cn(
-                    styles?.rowHeader,
-                    rowHeaders[rowIndex].className
+              {/* Row headers with rowSpan */}
+              {rowHeaderInfo && (
+                <>
+                  {rowHeaderInfo.isFirstInGroup && (
+                    <td
+                      rowSpan={rowHeaderInfo.groupRowCount}
+                      className={cn(styles?.rowHeader, rowHeaderInfo.groupClassName)}
+                      style={getRowHeaderStyle(rowHeaderInfo.groupClassName)}
+                      title={rowHeaderInfo.groupDescription}
+                    >
+                      {rowHeaderInfo.groupLabel}
+                    </td>
                   )}
-                  style={getRowHeaderStyle(rowHeaders[rowIndex].className)}
-                  title={rowHeaders[rowIndex].description}
-                >
-                  {rowHeaders[rowIndex].label}
-                </td>
+                  <td
+                    className={cn(styles?.rowHeader, rowHeaderInfo.rowHeader.className)}
+                    style={getRowHeaderStyle(rowHeaderInfo.rowHeader.className)}
+                    title={rowHeaderInfo.rowHeader.description}
+                  >
+                    {rowHeaderInfo.rowHeader.label}
+                  </td>
+                </>
               )}
               {/* Data cells */}
               {row.map((_, colIndex) => {
@@ -318,7 +365,8 @@ export function ExcelGrid({
                 );
               })}
             </tr>
-          ))}
+          );
+          })}
         </tbody>
       </table>
     </div>

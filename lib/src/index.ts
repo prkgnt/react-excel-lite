@@ -27,6 +27,7 @@ export type {
   SelectionRange,
   ColHeader,
   ColHeaderGroup,
+  RowHeader,
   RowHeaderGroup,
   GridStyles,
   ExcelGridProps,

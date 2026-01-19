@@ -1,3 +1,4 @@
+import { useState, useRef, useEffect } from "react";
 import { cn } from "../utils/cn";
 import type { GridCellProps } from "../types";
 import type { CSSProperties } from "react";
@@ -7,20 +8,21 @@ const cellBaseStyle: CSSProperties = {
   position: "relative",
   border: "1px solid #d1d5db",
   padding: 0,
+  height: "28px",
+  minWidth: "80px",
 };
 
 const inputBaseStyle: CSSProperties = {
   width: "100%",
   height: "100%",
-  paddingLeft: "4px",
-  paddingRight: "4px",
-  paddingTop: "4px",
-  paddingBottom: "4px",
+  padding: "4px",
   textAlign: "right",
   fontSize: "12px",
+  boxSizing: "border-box",
+  cursor: "cell",
   backgroundColor: "transparent",
   outline: "none",
-  cursor: "cell",
+  border: "none",
 };
 
 const fillHandleBaseStyle: CSSProperties = {
@@ -57,6 +59,28 @@ export function GridCell({
   onFillHandleMouseDown,
   styles,
 }: GridCellProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [shouldSelect, setShouldSelect] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Focus input when cell is selected or entering edit mode
+  useEffect(() => {
+    if (isSelected && inputRef.current) {
+      inputRef.current.focus();
+      if (isEditing && shouldSelect) {
+        inputRef.current.select();
+        setShouldSelect(false);
+      }
+    }
+  }, [isSelected, isEditing, shouldSelect]);
+
+  // Exit edit mode when cell is deselected
+  useEffect(() => {
+    if (!isSelected && isEditing) {
+      setIsEditing(false);
+    }
+  }, [isSelected, isEditing]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(coord, e.target.value);
   };
@@ -65,6 +89,36 @@ export function GridCell({
     // Start selection only when not clicking fill handle
     if (!(e.target as HTMLElement).classList.contains("fill-handle")) {
       onMouseDown(coord);
+    }
+  };
+
+  const handleDoubleClick = () => {
+    setIsEditing(true);
+    setShouldSelect(true);
+  };
+
+  const handleBlur = () => {
+    setIsEditing(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (isEditing) {
+      // In edit mode: Enter or Escape exits edit mode
+      if (e.key === "Enter" || e.key === "Escape") {
+        setIsEditing(false);
+      }
+    } else {
+      // In readOnly mode: Enter or printable key enters edit mode
+      if (e.key === "Enter") {
+        e.preventDefault();
+        setIsEditing(true);
+        setShouldSelect(true);
+      } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
+        // Printable character: enter edit mode and replace with typed char
+        e.preventDefault();
+        onChange(coord, e.key);
+        setIsEditing(true);
+      }
     }
   };
 
@@ -102,11 +156,16 @@ export function GridCell({
       style={cellStyle}
       onMouseDown={handleMouseDownCell}
       onMouseEnter={() => onMouseEnter(coord)}
+      onDoubleClick={handleDoubleClick}
     >
       <input
+        ref={inputRef}
         type="text"
         value={value}
+        readOnly={!isEditing}
         onChange={handleInputChange}
+        onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
         style={inputBaseStyle}
       />
       {/* Fill handle */}
