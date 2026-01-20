@@ -1,10 +1,6 @@
 import { useState } from "react";
 import { ExcelGrid } from "react-excel-lite";
-import type {
-  ColHeaderGroup,
-  RowHeaderGroup,
-  GridStyles,
-} from "react-excel-lite";
+import type { HeaderGroup, GridStyles } from "react-excel-lite";
 
 function App() {
   // Selection example data
@@ -40,7 +36,7 @@ function App() {
     ["5600", "6100", "5200", "6800", "4900", "7200"],
   ]);
 
-  const colHeaders: ColHeaderGroup[] = [
+  const colHeaders: HeaderGroup[] = [
     {
       label: "Q1 2025",
       description: "First quarter 2025",
@@ -61,7 +57,7 @@ function App() {
     },
   ];
 
-  const rowHeaders: RowHeaderGroup[] = [
+  const rowHeaders: HeaderGroup[] = [
     {
       label: "Products",
       description: "Product categories",
@@ -81,7 +77,7 @@ function App() {
     ["2500", "2800", "3100", "3400"],
   ]);
 
-  const styledColHeaders: ColHeaderGroup[] = [
+  const styledColHeaders: HeaderGroup[] = [
     {
       label: "Revenue",
       className: "bg-emerald-100 text-emerald-700",
@@ -100,7 +96,7 @@ function App() {
     },
   ];
 
-  const styledRowHeaders: RowHeaderGroup[] = [
+  const styledRowHeaders: HeaderGroup[] = [
     {
       label: "Regions",
       description: "Sales regions",
@@ -421,7 +417,7 @@ function App() {
           </div>
           <div className="mt-4 bg-slate-900 rounded-lg p-4 overflow-x-auto">
             <pre className="text-sm text-slate-300">
-              <code>{`const colHeaders: ColHeaderGroup[] = [
+              <code>{`const colHeaders: HeaderGroup[] = [
   {
     label: "Q1 2025",
     headers: [
@@ -433,7 +429,7 @@ function App() {
   // ...
 ];
 
-const rowHeaders: RowHeaderGroup[] = [
+const rowHeaders: HeaderGroup[] = [
   {
     label: "Products",
     headers: [
@@ -594,7 +590,7 @@ const plainTheme: GridStyles = {
           </div>
           <div className="mt-4 bg-slate-900 rounded-lg p-4 overflow-x-auto">
             <pre className="text-sm text-slate-300">
-              <code>{`const colHeaders: ColHeaderGroup[] = [
+              <code>{`const colHeaders: HeaderGroup[] = [
   {
     label: "Revenue",
     className: "bg-emerald-100 text-emerald-700",  // Group style
@@ -613,7 +609,7 @@ const plainTheme: GridStyles = {
   },
 ];
 
-const rowHeaders: RowHeaderGroup[] = [
+const rowHeaders: HeaderGroup[] = [
   {
     label: "Regions",
     headers: [
