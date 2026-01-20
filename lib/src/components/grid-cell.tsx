@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import { cn } from "../utils/cn";
 import type { GridCellProps } from "../types";
 import type { CSSProperties } from "react";
@@ -36,6 +36,37 @@ const fillHandleBaseStyle: CSSProperties = {
   backgroundColor: "#3b82f6",
 };
 
+// Overlay input container style (for editing mode)
+const overlayContainerStyle: CSSProperties = {
+  position: "absolute",
+  top: 0,
+  left: 0,
+  minWidth: "100%",
+  height: "100%",
+  zIndex: 30,
+};
+
+const overlayInputStyle: CSSProperties = {
+  height: "100%",
+  padding: "4px",
+  textAlign: "right",
+  fontSize: "12px",
+  boxSizing: "border-box",
+  backgroundColor: "#fff",
+  border: "2px solid #3b82f6",
+  outline: "none",
+  minWidth: "100%",
+};
+
+// Hidden span style for measuring text width
+const measureSpanStyle: CSSProperties = {
+  position: "absolute",
+  visibility: "hidden",
+  whiteSpace: "pre",
+  fontSize: "12px",
+  padding: "4px",
+};
+
 // Default styles when user doesn't provide custom styles
 const selectedDefaultStyle: CSSProperties = {
   backgroundColor: "#dbeafe",
@@ -61,16 +92,32 @@ export function GridCell({
 }: GridCellProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [shouldSelect, setShouldSelect] = useState(false);
+  const [inputWidth, setInputWidth] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const overlayInputRef = useRef<HTMLInputElement>(null);
+  const measureSpanRef = useRef<HTMLSpanElement>(null);
+  const cellRef = useRef<HTMLTableCellElement>(null);
 
-  // Focus input when cell is selected or entering edit mode
+  // Measure text width and update input width
+  useLayoutEffect(() => {
+    if (isEditing && measureSpanRef.current && cellRef.current) {
+      const textWidth = measureSpanRef.current.offsetWidth;
+      const cellWidth = cellRef.current.offsetWidth;
+      // Use larger of text width or cell width, with some padding
+      setInputWidth(Math.max(textWidth + 16, cellWidth));
+    }
+  }, [isEditing, value]);
+
+  // Focus overlay input when entering edit mode
   useEffect(() => {
-    if (isSelected && inputRef.current) {
-      inputRef.current.focus();
-      if (isEditing && shouldSelect) {
-        inputRef.current.select();
+    if (isEditing && overlayInputRef.current) {
+      overlayInputRef.current.focus();
+      if (shouldSelect) {
+        overlayInputRef.current.select();
         setShouldSelect(false);
       }
+    } else if (isSelected && !isEditing && inputRef.current) {
+      inputRef.current.focus();
     }
   }, [isSelected, isEditing, shouldSelect]);
 
@@ -78,6 +125,7 @@ export function GridCell({
   useEffect(() => {
     if (!isSelected && isEditing) {
       setIsEditing(false);
+      setInputWidth(null);
     }
   }, [isSelected, isEditing]);
 
@@ -146,8 +194,16 @@ export function GridCell({
     ...(hasCustomFillHandle ? { backgroundColor: undefined } : {}),
   };
 
+  // Input style with overflow hidden for non-editing state
+  const currentInputStyle: CSSProperties = {
+    ...inputBaseStyle,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+  };
+
   return (
     <td
+      ref={cellRef}
       className={cn(
         styles?.cell,
         isSelected && styles?.selected,
@@ -158,16 +214,43 @@ export function GridCell({
       onMouseEnter={() => onMouseEnter(coord)}
       onDoubleClick={handleDoubleClick}
     >
+      {/* Base input - maintains layout, shows truncated text when not editing */}
       <input
         ref={inputRef}
         type="text"
         value={value}
-        readOnly={!isEditing}
+        readOnly
         onChange={handleInputChange}
-        onBlur={handleBlur}
         onKeyDown={handleKeyDown}
-        style={inputBaseStyle}
+        style={currentInputStyle}
+        tabIndex={isEditing ? -1 : 0}
       />
+
+      {/* Overlay input - appears when editing, expands to fit content */}
+      {isEditing && (
+        <div style={overlayContainerStyle}>
+          <input
+            ref={overlayInputRef}
+            type="text"
+            value={value}
+            onChange={handleInputChange}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
+            style={{
+              ...overlayInputStyle,
+              width: inputWidth ?? "100%",
+            }}
+          />
+        </div>
+      )}
+
+      {/* Hidden span for measuring text width */}
+      {isEditing && (
+        <span ref={measureSpanRef} style={measureSpanStyle}>
+          {value}
+        </span>
+      )}
+
       {/* Fill handle */}
       {showFillHandle && (
         <div
