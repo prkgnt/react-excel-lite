@@ -96,4 +96,6 @@ export interface GridCellProps {
   styles?: Pick<GridStyles, "cell" | "selected" | "fillTarget" | "fillHandle">;
   /** Custom className for this specific cell */
   cellClassName?: string;
+  /** Total column count (used for determining input expansion direction) */
+  colCount: number;
 }

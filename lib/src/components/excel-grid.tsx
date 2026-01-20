@@ -377,6 +377,7 @@ export function ExcelGrid({
                     onFillHandleMouseDown={handleFillHandleMouseDown}
                     styles={styles}
                     cellClassName={cellClassName}
+                    colCount={colCount}
                   />
                 );
               })}
