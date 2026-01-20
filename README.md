@@ -8,6 +8,9 @@
 
 A lightweight, Excel-like editable grid component for React.
 
+## Demo
+[react-excel-lite-demo](https://prkgnt.github.io/react-excel-lite/)
+
 ## Features
 
 - Excel-like cell selection (click & drag)
