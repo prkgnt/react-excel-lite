@@ -116,6 +116,47 @@ function App() {
 }
 ```
 
+## Simple Headers (Without Group Labels)
+
+When all HeaderGroups have no `label`, the grid displays a single header row/column instead of two levels:
+
+```tsx
+const colHeaders: HeaderGroup[] = [
+  {
+    // No label - single header row
+    headers: [
+      { key: "jan", label: "Jan" },
+      { key: "feb", label: "Feb" },
+    ],
+  },
+  {
+    headers: [
+      { key: "mar", label: "Mar" },
+      { key: "apr", label: "Apr" },
+    ],
+  },
+];
+
+const rowHeaders: HeaderGroup[] = [
+  {
+    // No label - single header column
+    headers: [
+      { key: "row1", label: "Row 1" },
+      { key: "row2", label: "Row 2" },
+    ],
+  },
+];
+
+<ExcelGrid
+  data={data}
+  onChange={setData}
+  colHeaders={colHeaders}
+  rowHeaders={rowHeaders}
+/>;
+```
+
+If at least one group has a `label`, the grid shows the two-level layout (group labels + individual headers).
+
 ## Styling
 
 The component comes with sensible default styles built-in. You can customize styles using the `styles` prop with CSS class strings from any styling solution.
@@ -303,7 +344,7 @@ interface Header {
 }
 
 interface HeaderGroup {
-  label: string;
+  label?: string;
   headers: Header[];
   description?: string;
   className?: string;

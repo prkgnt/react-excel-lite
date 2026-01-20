@@ -64,7 +64,7 @@ const colHeaderVisualStyle: CSSProperties = {
 interface FlatRowHeaderInfo {
   groupIndex: number;
   isFirstInGroup: boolean;
-  groupLabel: string;
+  groupLabel?: string;
   groupRowCount: number;
   rowHeader: { key: string; label: string; description?: string; className?: string };
   groupClassName?: string;
@@ -99,6 +99,17 @@ export function ExcelGrid({
     if (!colHeaders) return [];
     return colHeaders.flatMap((group) => group.headers);
   }, [colHeaders]);
+
+  // Check if any group has a label (for conditional rendering of group row/column)
+  const hasColGroupLabels = useMemo(() => {
+    if (!colHeaders) return false;
+    return colHeaders.some((group) => group.label !== undefined);
+  }, [colHeaders]);
+
+  const hasRowGroupLabels = useMemo(() => {
+    if (!rowHeaders) return false;
+    return rowHeaders.some((group) => group.label !== undefined);
+  }, [rowHeaders]);
 
   // Flatten row header groups for rowSpan rendering
   const flatRowHeaders = useMemo((): FlatRowHeaderInfo[] | null => {
@@ -262,13 +273,13 @@ export function ExcelGrid({
     >
       <table style={tableBaseStyle}>
         <thead>
-          {/* Group header row */}
-          {colHeaders && (
+          {/* Group header row (only rendered if any group has a label) */}
+          {colHeaders && hasColGroupLabels && (
             <tr>
               {/* Row header column(s) */}
               {rowHeaders && (
                 <th
-                  colSpan={2}
+                  colSpan={hasRowGroupLabels ? 2 : 1}
                   className={styles?.rowHeader}
                   style={getRowHeaderStyle()}
                 >
@@ -284,7 +295,7 @@ export function ExcelGrid({
                   style={getColGroupStyle(group.className)}
                   title={group.description}
                 >
-                  {group.label}
+                  {group.label ?? ""}
                 </th>
               ))}
             </tr>
@@ -295,10 +306,12 @@ export function ExcelGrid({
               {/* Empty cell(s) for row headers */}
               {rowHeaders && (
                 <th
-                  colSpan={2}
+                  colSpan={hasRowGroupLabels ? 2 : 1}
                   className={styles?.rowHeader}
                   style={getRowHeaderStyle()}
-                ></th>
+                >
+                  {!hasColGroupLabels && rowHeaderTitle}
+                </th>
               )}
               {/* Individual headers */}
               {flatHeaders.map((header) => (
@@ -322,14 +335,14 @@ export function ExcelGrid({
               {/* Row headers with rowSpan */}
               {rowHeaderInfo && (
                 <>
-                  {rowHeaderInfo.isFirstInGroup && (
+                  {hasRowGroupLabels && rowHeaderInfo.isFirstInGroup && (
                     <td
                       rowSpan={rowHeaderInfo.groupRowCount}
                       className={cn(styles?.rowHeader, rowHeaderInfo.groupClassName)}
                       style={getRowHeaderStyle(rowHeaderInfo.groupClassName)}
                       title={rowHeaderInfo.groupDescription}
                     >
-                      {rowHeaderInfo.groupLabel}
+                      {rowHeaderInfo.groupLabel ?? ""}
                     </td>
                   )}
                   <td

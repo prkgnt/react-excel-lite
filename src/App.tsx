@@ -70,6 +70,40 @@ function App() {
     },
   ];
 
+  // Simple headers example (no group labels)
+  const [simpleData, setSimpleData] = useState([
+    ["500", "600", "700", "800"],
+    ["900", "1000", "1100", "1200"],
+    ["1300", "1400", "1500", "1600"],
+  ]);
+
+  const simpleColHeaders: HeaderGroup[] = [
+    {
+      // No label - single header row
+      headers: [
+        { key: "mon", label: "Mon" },
+        { key: "tue", label: "Tue" },
+      ],
+    },
+    {
+      headers: [
+        { key: "wed", label: "Wed" },
+        { key: "thu", label: "Thu" },
+      ],
+    },
+  ];
+
+  const simpleRowHeaders: HeaderGroup[] = [
+    {
+      // No label - single header column
+      headers: [
+        { key: "morning", label: "Morning" },
+        { key: "afternoon", label: "Afternoon" },
+        { key: "evening", label: "Evening" },
+      ],
+    },
+  ];
+
   // Custom styling example data
   const [styledData, setStyledData] = useState([
     ["1200", "1500", "1800", "2100"],
@@ -445,6 +479,63 @@ const rowHeaders: HeaderGroup[] = [
   colHeaders={colHeaders}
   rowHeaders={rowHeaders}
   rowHeaderTitle="Product"
+/>`}</code>
+            </pre>
+          </div>
+        </section>
+
+        {/* Simple Headers */}
+        <section>
+          <h2 className="text-xl font-semibold text-slate-900 mb-2">
+            Simple Headers (Without Group Labels)
+          </h2>
+          <p className="text-slate-500 mb-4">
+            When all HeaderGroups have no{" "}
+            <code className="bg-slate-100 px-1.5 py-0.5 rounded">label</code>,
+            the grid displays a single header row/column instead of two levels.
+          </p>
+          <div className="bg-white rounded-lg border border-slate-200 p-6 overflow-x-auto">
+            <ExcelGrid
+              data={simpleData}
+              onChange={setSimpleData}
+              colHeaders={simpleColHeaders}
+              rowHeaders={simpleRowHeaders}
+            />
+          </div>
+          <div className="mt-4 bg-slate-900 rounded-lg p-4 overflow-x-auto">
+            <pre className="text-sm text-slate-300">
+              <code>{`const colHeaders: HeaderGroup[] = [
+  {
+    // No label - single header row
+    headers: [
+      { key: "mon", label: "Mon" },
+      { key: "tue", label: "Tue" },
+    ],
+  },
+  {
+    headers: [
+      { key: "wed", label: "Wed" },
+      { key: "thu", label: "Thu" },
+    ],
+  },
+];
+
+const rowHeaders: HeaderGroup[] = [
+  {
+    // No label - single header column
+    headers: [
+      { key: "morning", label: "Morning" },
+      { key: "afternoon", label: "Afternoon" },
+      { key: "evening", label: "Evening" },
+    ],
+  },
+];
+
+<ExcelGrid
+  data={data}
+  onChange={setData}
+  colHeaders={colHeaders}
+  rowHeaders={rowHeaders}
 />`}</code>
             </pre>
           </div>

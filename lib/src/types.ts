@@ -29,7 +29,7 @@ export interface Header {
  * Header group
  */
 export interface HeaderGroup {
-  label: string;
+  label?: string;
   headers: Header[];
   description?: string;
   /** Custom class name for this group header */
