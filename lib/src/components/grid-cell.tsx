@@ -36,11 +36,10 @@ const fillHandleBaseStyle: CSSProperties = {
   backgroundColor: "#3b82f6",
 };
 
-// Overlay input container style (for editing mode)
-const overlayContainerStyle: CSSProperties = {
+// Overlay input container base style (for editing mode)
+const overlayContainerBaseStyle: CSSProperties = {
   position: "absolute",
   top: 0,
-  left: 0,
   minWidth: "100%",
   height: "100%",
   zIndex: 30,
@@ -90,7 +89,11 @@ export function GridCell({
   onFillHandleMouseDown,
   styles,
   cellClassName,
+  colCount,
 }: GridCellProps) {
+  // Determine expansion direction based on cell position
+  // Cells in the right half expand to the left, cells in the left half expand to the right
+  const expandToLeft = coord.col >= colCount / 2;
   const [isEditing, setIsEditing] = useState(false);
   const [shouldSelect, setShouldSelect] = useState(false);
   const [inputWidth, setInputWidth] = useState<number | null>(null);
@@ -230,7 +233,12 @@ export function GridCell({
 
       {/* Overlay input - appears when editing, expands to fit content */}
       {isEditing && (
-        <div style={overlayContainerStyle}>
+        <div
+          style={{
+            ...overlayContainerBaseStyle,
+            ...(expandToLeft ? { right: 0 } : { left: 0 }),
+          }}
+        >
           <input
             ref={overlayInputRef}
             type="text"
@@ -241,6 +249,7 @@ export function GridCell({
             style={{
               ...overlayInputStyle,
               width: inputWidth ?? "100%",
+              textAlign: expandToLeft ? "right" : "left",
             }}
           />
         </div>
