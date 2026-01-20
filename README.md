@@ -51,15 +51,16 @@ function App() {
 
 ## Props
 
-| Prop             | Type                         | Required | Description                 |
-| ---------------- | ---------------------------- | -------- | --------------------------- |
-| `data`           | `string[][]`                 | Yes      | 2D array of strings         |
-| `onChange`       | `(data: string[][]) => void` | Yes      | Callback when data changes  |
-| `rowHeaders`     | `HeaderGroup[]`              | No       | Grouped row headers         |
-| `colHeaders`     | `HeaderGroup[]`              | No       | Grouped column headers      |
-| `className`      | `string`                     | No       | CSS class for container     |
-| `rowHeaderTitle` | `string`                     | No       | Title for row header column |
-| `styles`         | `GridStyles`                 | No       | Style configuration object  |
+| Prop             | Type                                      | Required | Description                          |
+| ---------------- | ----------------------------------------- | -------- | ------------------------------------ |
+| `data`           | `string[][]`                              | Yes      | 2D array of strings                  |
+| `onChange`       | `(data: string[][]) => void`              | Yes      | Callback when data changes           |
+| `rowHeaders`     | `HeaderGroup[]`                           | No       | Grouped row headers                  |
+| `colHeaders`     | `HeaderGroup[]`                           | No       | Grouped column headers               |
+| `className`      | `string`                                  | No       | CSS class for container              |
+| `rowHeaderTitle` | `string`                                  | No       | Title for row header column          |
+| `styles`         | `GridStyles`                              | No       | Style configuration object           |
+| `cellStyles`     | `(coord: CellCoord) => string｜undefined` | No       | Function to style individual cells   |
 
 ## With Headers
 
@@ -276,6 +277,56 @@ const rowHeaders: HeaderGroup[] = [
 ];
 ```
 
+### Styling Individual Cells
+
+Use the `cellStyles` prop to apply styles to specific cells based on their coordinates:
+
+```tsx
+import { useCallback } from "react";
+import type { CellCoord } from "react-excel-lite";
+
+function App() {
+  const [data, setData] = useState([
+    ["100", "200", "300"],
+    ["400", "500", "600"],
+    ["700", "800", "900"],
+  ]);
+
+  // Memoize to prevent unnecessary re-renders
+  const cellStyles = useCallback((coord: CellCoord) => {
+    // Highlight first row
+    if (coord.row === 0) return "bg-yellow-100";
+    // Highlight specific cell
+    if (coord.row === 1 && coord.col === 1) return "bg-red-100 font-bold";
+    // Highlight cells with negative values (check data)
+    return undefined;
+  }, []);
+
+  return <ExcelGrid data={data} onChange={setData} cellStyles={cellStyles} />;
+}
+```
+
+Common use cases:
+- Highlight header rows or columns
+- Show validation errors (e.g., red background for invalid cells)
+- Conditional formatting based on cell values
+- Alternating row colors
+
+```tsx
+// Alternating row colors
+const cellStyles = useCallback((coord: CellCoord) => {
+  return coord.row % 2 === 0 ? "bg-gray-50" : "bg-white";
+}, []);
+
+// Value-based styling (check data in callback)
+const cellStyles = useCallback((coord: CellCoord) => {
+  const value = Number(data[coord.row]?.[coord.col]);
+  if (value < 0) return "bg-red-100 text-red-700";
+  if (value > 1000) return "bg-green-100 text-green-700";
+  return undefined;
+}, [data]);
+```
+
 ## Auto Fill (Arithmetic Sequence)
 
 Select cells with a numeric pattern and drag the fill handle to auto-fill:
@@ -368,6 +419,7 @@ interface ExcelGridProps {
   className?: string;
   rowHeaderTitle?: string;
   styles?: GridStyles;
+  cellStyles?: (coord: CellCoord) => string | undefined;
 }
 ```
 

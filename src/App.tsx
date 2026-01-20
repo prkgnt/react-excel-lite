@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { ExcelGrid } from "react-excel-lite";
-import type { HeaderGroup, GridStyles } from "react-excel-lite";
+import type { HeaderGroup, GridStyles, CellCoord } from "react-excel-lite";
 
 function App() {
   // Selection example data
@@ -194,6 +194,40 @@ function App() {
     ["400", "500", "600"],
     ["", "", ""],
   ]);
+
+  // Cell Styles example data
+  const [cellStylesData, setCellStylesData] = useState([
+    ["Revenue", "1200", "1500", "1800"],
+    ["Cost", "800", "950", "1100"],
+    ["Profit", "400", "550", "700"],
+    ["Growth", "5%", "8%", "12%"],
+  ]);
+
+  // Cell styles function - highlight first column and specific cells
+  const getCellStyles = useCallback((coord: CellCoord) => {
+    // First column as header style
+    if (coord.col === 0) return "bg-slate-100 font-medium";
+    // Highlight profit row with green
+    if (coord.row === 2) return "bg-emerald-50 text-emerald-700";
+    // Highlight growth row with blue
+    if (coord.row === 3) return "bg-blue-50 text-blue-700";
+    return undefined;
+  }, []);
+
+  // Value-based cell styles example
+  const [valueStylesData, setValueStylesData] = useState([
+    ["250", "-120", "800", "50"],
+    ["-300", "1500", "-50", "200"],
+    ["100", "450", "-200", "2000"],
+  ]);
+
+  const getValueBasedStyles = useCallback((coord: CellCoord) => {
+    const value = Number(valueStylesData[coord.row]?.[coord.col]);
+    if (isNaN(value)) return undefined;
+    if (value < 0) return "bg-red-50 text-red-600";
+    if (value >= 1000) return "bg-emerald-50 text-emerald-600 font-semibold";
+    return undefined;
+  }, [valueStylesData]);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -710,6 +744,84 @@ const rowHeaders: HeaderGroup[] = [
     ],
   },
 ];`}</code>
+            </pre>
+          </div>
+
+          {/* Cell Styling */}
+          <h3 className="text-lg font-medium text-slate-800 mb-4 mt-10">
+            Cell Styling
+          </h3>
+          <p className="text-slate-500 mb-4">
+            Use the{" "}
+            <code className="bg-slate-100 px-1.5 py-0.5 rounded">
+              cellStyles
+            </code>{" "}
+            prop to apply styles to specific cells based on their coordinates.
+          </p>
+
+          <div className="grid md:grid-cols-2 gap-6 mb-6">
+            {/* Position-based styling */}
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-3 h-3 rounded-full bg-slate-500" />
+                <span className="text-sm font-medium text-slate-700">
+                  Position-based
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 mb-2">
+                First column styled as header, rows 3-4 highlighted
+              </p>
+              <div className="bg-white rounded-lg border border-slate-200 p-4">
+                <ExcelGrid
+                  data={cellStylesData}
+                  onChange={setCellStylesData}
+                  cellStyles={getCellStyles}
+                />
+              </div>
+            </div>
+
+            {/* Value-based styling */}
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-3 h-3 rounded-full bg-gradient-to-r from-red-500 to-emerald-500" />
+                <span className="text-sm font-medium text-slate-700">
+                  Value-based
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 mb-2">
+                Negative values in red, values {">"}= 1000 in green
+              </p>
+              <div className="bg-white rounded-lg border border-slate-200 p-4">
+                <ExcelGrid
+                  data={valueStylesData}
+                  onChange={setValueStylesData}
+                  cellStyles={getValueBasedStyles}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-slate-900 rounded-lg p-4 overflow-x-auto">
+            <pre className="text-sm text-slate-300">
+              <code>{`import { useCallback } from "react";
+import type { CellCoord } from "react-excel-lite";
+
+// Position-based styling
+const cellStyles = useCallback((coord: CellCoord) => {
+  if (coord.col === 0) return "bg-slate-100 font-medium";
+  if (coord.row === 2) return "bg-emerald-50 text-emerald-700";
+  return undefined;
+}, []);
+
+// Value-based styling (include data in dependencies)
+const cellStyles = useCallback((coord: CellCoord) => {
+  const value = Number(data[coord.row]?.[coord.col]);
+  if (value < 0) return "bg-red-50 text-red-600";
+  if (value >= 1000) return "bg-emerald-50 text-emerald-600";
+  return undefined;
+}, [data]);
+
+<ExcelGrid data={data} onChange={setData} cellStyles={cellStyles} />`}</code>
             </pre>
           </div>
         </section>
