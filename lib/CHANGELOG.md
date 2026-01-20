@@ -1,5 +1,15 @@
 # react-excel-lite
 
+## 0.4.1
+
+### Patch Changes
+
+- 211d18e: Fix input expansion direction based on cell position
+
+  - Cells in the right half of the grid now expand input to the left
+  - Cells in the left half expand input to the right (existing behavior)
+  - Prevents input from being clipped by other components at grid edges
+
 ## 0.4.0
 
 ### Minor Changes
