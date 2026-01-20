@@ -15,9 +15,9 @@ export interface SelectionRange {
 }
 
 /**
- * Column header definition
+ * Header definition
  */
-export interface ColHeader {
+export interface Header {
   key: string;
   label: string;
   description?: string;
@@ -26,33 +26,11 @@ export interface ColHeader {
 }
 
 /**
- * Column header group
+ * Header group
  */
-export interface ColHeaderGroup {
+export interface HeaderGroup {
   label: string;
-  headers: ColHeader[];
-  description?: string;
-  /** Custom class name for this group header */
-  className?: string;
-}
-
-/**
- * Row header definition
- */
-export interface RowHeader {
-  key: string;
-  label: string;
-  description?: string;
-  /** Custom class name for this header cell */
-  className?: string;
-}
-
-/**
- * Row header group
- */
-export interface RowHeaderGroup {
-  label: string;
-  headers: RowHeader[];
+  headers: Header[];
   description?: string;
   /** Custom class name for this group header */
   className?: string;
@@ -88,9 +66,9 @@ export interface ExcelGridProps {
   /** Data change callback */
   onChange: (data: string[][]) => void;
   /** Row header group definitions */
-  rowHeaders?: RowHeaderGroup[];
+  rowHeaders?: HeaderGroup[];
   /** Column header group definitions */
-  colHeaders?: ColHeaderGroup[];
+  colHeaders?: HeaderGroup[];
   /** Additional class name for container */
   className?: string;
   /** Row header column title */

@@ -18,6 +18,7 @@ A lightweight, Excel-like editable grid component for React.
 - Grouped row headers with rowSpan support
 - Click outside to clear selection
 - Double-click or type to edit cells
+- Expandable input field when editing (text overflow handling)
 - Keyboard shortcuts (Delete/Backspace to clear)
 - **Styling-agnostic**: Works with Tailwind CSS, CSS Modules, plain CSS, or any styling solution
 - Zero external dependencies
@@ -45,23 +46,14 @@ function App() {
 }
 ```
 
-## Demo
-
-Run the demo locally:
-
-```bash
-npm install
-npm run dev
-```
-
 ## Props
 
 | Prop             | Type                         | Required | Description                 |
 | ---------------- | ---------------------------- | -------- | --------------------------- |
 | `data`           | `string[][]`                 | Yes      | 2D array of strings         |
 | `onChange`       | `(data: string[][]) => void` | Yes      | Callback when data changes  |
-| `rowHeaders`     | `RowHeaderGroup[]`           | No       | Grouped row headers         |
-| `colHeaders`     | `ColHeaderGroup[]`           | No       | Grouped column headers      |
+| `rowHeaders`     | `HeaderGroup[]`              | No       | Grouped row headers         |
+| `colHeaders`     | `HeaderGroup[]`              | No       | Grouped column headers      |
 | `className`      | `string`                     | No       | CSS class for container     |
 | `rowHeaderTitle` | `string`                     | No       | Title for row header column |
 | `styles`         | `GridStyles`                 | No       | Style configuration object  |
@@ -71,7 +63,7 @@ npm run dev
 ```tsx
 import { useState } from "react";
 import { ExcelGrid } from "react-excel-lite";
-import type { ColHeaderGroup, RowHeaderGroup } from "react-excel-lite";
+import type { HeaderGroup } from "react-excel-lite";
 
 function App() {
   const [data, setData] = useState([
@@ -79,7 +71,7 @@ function App() {
     ["500", "600", "700", "800"],
   ]);
 
-  const colHeaders: ColHeaderGroup[] = [
+  const colHeaders: HeaderGroup[] = [
     {
       label: "Q1",
       description: "First quarter",
@@ -98,7 +90,7 @@ function App() {
     },
   ];
 
-  const rowHeaders: RowHeaderGroup[] = [
+  const rowHeaders: HeaderGroup[] = [
     {
       label: "Products",
       description: "Product categories",
@@ -213,7 +205,7 @@ interface GridStyles {
 Style individual column headers and groups:
 
 ```tsx
-const colHeaders: ColHeaderGroup[] = [
+const colHeaders: HeaderGroup[] = [
   {
     label: "Revenue",
     className: "bg-green-100 text-green-700",
@@ -228,7 +220,7 @@ const colHeaders: ColHeaderGroup[] = [
 Style individual row headers:
 
 ```tsx
-const rowHeaders: RowHeaderGroup[] = [
+const rowHeaders: HeaderGroup[] = [
   {
     label: "Regions",
     className: "bg-slate-700 text-white",
@@ -300,30 +292,16 @@ interface SelectionRange {
   end: CellCoord | null;
 }
 
-interface ColHeader {
+interface Header {
   key: string;
   label: string;
   description?: string;
   className?: string;
 }
 
-interface ColHeaderGroup {
+interface HeaderGroup {
   label: string;
-  headers: ColHeader[];
-  description?: string;
-  className?: string;
-}
-
-interface RowHeader {
-  key: string;
-  label: string;
-  description?: string;
-  className?: string;
-}
-
-interface RowHeaderGroup {
-  label: string;
-  headers: RowHeader[];
+  headers: Header[];
   description?: string;
   className?: string;
 }
@@ -341,25 +319,12 @@ interface GridStyles {
 interface ExcelGridProps {
   data: string[][];
   onChange: (data: string[][]) => void;
-  rowHeaders?: RowHeaderGroup[];
-  colHeaders?: ColHeaderGroup[];
+  rowHeaders?: HeaderGroup[];
+  colHeaders?: HeaderGroup[];
   className?: string;
   rowHeaderTitle?: string;
   styles?: GridStyles;
 }
-```
-
-## Development
-
-```bash
-# Install dependencies
-npm install
-
-# Run demo
-npm run dev
-
-# Build library
-cd lib && npm run build
 ```
 
 ## License
