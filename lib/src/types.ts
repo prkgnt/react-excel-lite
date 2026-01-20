@@ -75,6 +75,8 @@ export interface ExcelGridProps {
   rowHeaderTitle?: string;
   /** Style configuration */
   styles?: GridStyles;
+  /** Function to apply custom className to specific cells */
+  cellStyles?: (coord: CellCoord) => string | undefined;
 }
 
 /**
@@ -92,4 +94,6 @@ export interface GridCellProps {
   onFillHandleMouseDown: (coord: CellCoord) => void;
   /** Cell styles */
   styles?: Pick<GridStyles, "cell" | "selected" | "fillTarget" | "fillHandle">;
+  /** Custom className for this specific cell */
+  cellClassName?: string;
 }

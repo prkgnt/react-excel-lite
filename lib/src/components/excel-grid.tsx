@@ -79,6 +79,7 @@ export function ExcelGrid({
   className,
   rowHeaderTitle = "",
   styles,
+  cellStyles,
 }: ExcelGridProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -360,6 +361,7 @@ export function ExcelGrid({
                 const isSelected = isCellSelected(coord);
                 const isFill = isFillTarget(coord);
                 const isBottomRight = isBottomRightCell(coord);
+                const cellClassName = cellStyles?.(coord);
 
                 return (
                   <GridCell
@@ -374,6 +376,7 @@ export function ExcelGrid({
                     onChange={handleCellChange}
                     onFillHandleMouseDown={handleFillHandleMouseDown}
                     styles={styles}
+                    cellClassName={cellClassName}
                   />
                 );
               })}

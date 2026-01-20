@@ -89,6 +89,7 @@ export function GridCell({
   onChange,
   onFillHandleMouseDown,
   styles,
+  cellClassName,
 }: GridCellProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [shouldSelect, setShouldSelect] = useState(false);
@@ -207,7 +208,8 @@ export function GridCell({
       className={cn(
         styles?.cell,
         isSelected && styles?.selected,
-        isFillTarget && styles?.fillTarget
+        isFillTarget && styles?.fillTarget,
+        cellClassName
       )}
       style={cellStyle}
       onMouseDown={handleMouseDownCell}
